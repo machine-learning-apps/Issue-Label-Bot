@@ -9,4 +9,4 @@ TODO:
 - Flask app
 - Train models on data
 - Wire it up
-
+- Use Heroku + GitHub Actions to Deploy :rocket:
