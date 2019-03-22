@@ -121,9 +121,10 @@ class GitHubApp(GitHub):
             number: int
             body: str
             labels: list
+            url: str
 
         """
-        Issue = namedtuple('Issue', ['title', 'number', 'body', 'labels'])
+        Issue = namedtuple('Issue', ['title', 'number', 'body', 'labels', 'url'])
 
         issue_data = []
         issues = list(client.issues_on(owner, repo))
@@ -137,7 +138,8 @@ class GitHubApp(GitHub):
             issue_data.append(Issue(title=issue.title,
                                     number=issue.number,
                                     body=issue.body,
-                                    labels=[label.name for label in issue.labels()])
+                                    labels=[label.name for label in issue.labels()],
+                                    url=issue.html_url)
                              )
         return issue_data
 
