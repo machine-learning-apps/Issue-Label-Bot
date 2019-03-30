@@ -6,7 +6,7 @@ See [demo](notebooks/Demo.ipynb) notebook.
 
 
 TODO: 
-- Flask app
-- Train models on data
-- Wire it up
-- Use Heroku + GitHub Actions to Deploy :rocket:
+- [ ] Flask app
+- [x] Train models on data
+- [ ] Wire it up
+- [ ] Use Heroku or GitHub Actions to Deploy :rocket:
