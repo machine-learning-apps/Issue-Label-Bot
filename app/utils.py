@@ -1,4 +1,9 @@
 import numpy as np
+
+# Because of error when using a virutal env
+# https://markhneedham.com/blog/2018/05/04/python-runtime-error-osx-matplotlib-not-installed-as-framework-mac/
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from sklearn import svm, datasets
@@ -30,8 +35,6 @@ def plot_confusion_matrix(y_true, y_pred, classes,
         print("Normalized confusion matrix")
     else:
         print('Confusion matrix, without normalization')
-
-    print(cm)
 
     fig, ax = plt.subplots()
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)

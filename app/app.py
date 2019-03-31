@@ -27,6 +27,14 @@ def init():
     model_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/Issue_Label_v1_best_model.hdf5'
     model_filename = 'downloaded_model.hdf5'
 
+    #save keyfile
+    pem_string = os.getenv('PRIVATE_KEY')
+    if not pem_string:
+        raise ValueError('Environment variable PRIVATE_KEY was not supplied.')
+    
+    with open('private-key.pem', 'wb') as f:
+        f.write(str.encode(pem_string))
+
     with urlopen(title_pp_url) as f:
         title_pp = dpickle.load(f)
 
@@ -41,7 +49,7 @@ def init():
                                      model=model)
 
 
-
+# smee by default sends things to /event_handler route
 @app.route("/event_handler", methods=["POST", "GET"])
 def index():
     "Handle payload"
@@ -80,7 +88,7 @@ def index():
 
 def get_issue_handle(installation_id, username, repository, number):
     app_id = 27079
-    key_file_path = '/Users/hamelsmu/.ssh/hamel-python-app.2019-03-15.private-key.pem'
+    key_file_path = 'private-key.pem'
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
@@ -88,4 +96,4 @@ def get_issue_handle(installation_id, username, repository, number):
 if __name__ == "__main__":
     #app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
     init()
-    app.run(debug=True, host='0.0.0.0', port=3000)
+    app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
