@@ -11,4 +11,5 @@ TODO:
 - [ ] Ability to gather feedback (reactions)
 - [ ] User interface
 - [ ] Explore using issue summarization endpoint
-- [ ] Use Heroku or GitHub Actions to Deploy :rocket:
+- [ ] Use Heroku or GitHub Actions to Deploy
+- [ ] Blog post :rocket:
