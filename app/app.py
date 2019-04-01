@@ -1,5 +1,7 @@
 import os
-from flask import (Flask, session, render_template, 
+import logging
+import hmac
+from flask import (abort, Flask, session, render_template, 
                    session, redirect, url_for, request,
                    flash, jsonify)
 from flask_session import Session
@@ -12,6 +14,7 @@ from utils import IssueLabeler
 import dill as dpickle
 from urllib.request import urlopen
 import tensorflow as tf
+import ipdb
 
 app = Flask(__name__)
 
@@ -19,6 +22,10 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Additional Setup inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py
+app.webhook_secret = os.getenv('WEBHOOK_SECRET')
+LOG = logging.getLogger(__name__)
 
 def init():
     "Load all necessary artifacts to make predictions."
@@ -53,9 +60,11 @@ def init():
 @app.route("/event_handler", methods=["POST", "GET"])
 def index():
     "Handle payload"
+    # authenticate webhook to make sure it is from GitHub
+    verify_webhook(request)
+
     # if user tries to login, try to authenticate them using naive approach.
     payload = request.json
-
     # Check if payload corresponds to open issue
     if request.json['action'] == 'opened' and ('issue' in request.json):
         # get metadata
@@ -93,7 +102,20 @@ def get_issue_handle(installation_id, username, repository, number):
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
 
+def verify_webhook(request):
+    "Make sure request is from GitHub.com"
+    # Inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py#L191-L198
+    signature = request.headers['X-Hub-Signature'].split('=')[1]
+
+    mac = hmac.new(str.encode(app.webhook_secret), msg=request.data, digestmod='sha1')
+
+    if not hmac.compare_digest(mac.hexdigest(), signature):
+        LOG.warning('GitHub hook signature verification failed.')
+        abort(400)
+
+
 if __name__ == "__main__":
     #app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
     init()
     app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
+
