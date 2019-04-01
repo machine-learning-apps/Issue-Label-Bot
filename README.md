@@ -1,5 +1,6 @@
 :construction: "How to create machine learning products that automate tasks on GitHub for fun and profit" :construction:
 
+See [these issues](https://github.com/hamelsmu/example-github-app/issues) for examples of auto-labeling behavior.
 
 TODO: 
 - [x] Flask app
@@ -7,5 +8,7 @@ TODO:
 - [x] Wire it up
 - [ ] Create database
 - [ ] ORM - Database logging
-- [ ] Ability to get feedback
+- [ ] Ability to gather feedback (reactions)
+- [ ] User interface
+- [ ] Explore using issue summarization endpoint
 - [ ] Use Heroku or GitHub Actions to Deploy :rocket:
