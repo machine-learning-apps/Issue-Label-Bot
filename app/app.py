@@ -13,6 +13,7 @@ from tensorflow.keras.utils import get_file
 from utils import IssueLabeler
 import dill as dpickle
 from urllib.request import urlopen
+from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import ipdb
 
@@ -20,8 +21,12 @@ app = Flask(__name__)
 
 # Configure session to use filesystem. Hamel: BOILERPLATE.
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Bind database to flask app
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 # Additional Setup inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py
 app.webhook_secret = os.getenv('WEBHOOK_SECRET')
@@ -33,6 +38,9 @@ def init():
     body_pp_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/body_pp.dpkl'
     model_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/Issue_Label_v1_best_model.hdf5'
     model_filename = 'downloaded_model.hdf5'
+
+    # create tables if they do not exist
+    db.create_all()
 
     #save keyfile
     pem_string = os.getenv('PRIVATE_KEY')
@@ -57,7 +65,7 @@ def init():
 
 
 # smee by default sends things to /event_handler route
-@app.route("/event_handler", methods=["POST", "GET"])
+@app.route("/event_handler", methods=["POST"])
 def index():
     "Handle payload"
     # authenticate webhook to make sure it is from GitHub
@@ -115,7 +123,6 @@ def verify_webhook(request):
 
 
 if __name__ == "__main__":
-    #app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
-    init()
+    with app.app_context():
+        init()
     app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
-
