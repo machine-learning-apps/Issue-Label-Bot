@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, Counter
 from github3 import GitHub
 from pathlib import Path
 from cryptography.hazmat.backends import default_backend
@@ -75,6 +75,18 @@ class GitHubApp(GitHub):
             private_key = default_backend().load_pem_private_key(key_file.read(), None)
             return jwt.encode(payload, private_key, algorithm='RS256')
     
+    def get_installation_id(self, owner, repo):
+        "https://developer.github.com/v3/apps/#find-repository-installation"
+        url = f'https://api.github.com/repos/{owner}/{repo}/installation'
+
+        headers = {'Authorization': f'Bearer {self.get_jwt().decode()}',
+                   'Accept': 'application/vnd.github.machine-man-preview+json'}
+        
+        response = requests.get(url=url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(f'Status code : {response.status_code}, {response.json()}')
+        return response.json()['id']
+
     def get_installation_access_token(self, installation_id):
         "Get the installation access token for debugging."
         
@@ -111,6 +123,25 @@ class GitHubApp(GitHub):
         fields = ['name', 'full_name', 'id']
         return [self._extract(x, fields) for x in response.json()['repositories']]
     
+    def get_reactions(self, owner, repo, comment_id):
+        """Get a list of reactions.
+
+        https://developer.github.com/v3/reactions/#list-reactions-for-a-commit-comment
+        """
+        url = f'https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions'
+        installation_id = self.get_installation_id(owner, repo)
+        headers={'Authorization': f'token {self.get_installation_access_token(installation_id)}',
+                 'Accept': 'application/vnd.github.squirrel-girl-preview+json'}
+        
+        response = requests.get(url=url, headers=headers)
+        
+        if response.status_code >= 400:
+            raise Exception(f'Status code : {response.status_code}, {response.json()}')
+        
+        results = [self._extract(x, ['content']) for x in response.json()]
+        # count the reactions
+        return Counter([x['content'] for x in results])
+
     @staticmethod
     def unpack_issues(client, owner, repo, label_only=True):
         """
@@ -146,4 +177,3 @@ class GitHubApp(GitHub):
     def generate_installation_curl(self, endpoint):
         iat = self.get_installation_access_token()
         print(f'curl -i -H "Authorization: token {iat}" -H "Accept: application/vnd.github.machine-man-preview+json" https://api.github.com{endpoint}')
-        

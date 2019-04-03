@@ -124,14 +124,39 @@ def index():
         pass
     return 'ok'
 
+@app.route("/update_feedback/<string:owner>/<string:repo>")
+def update_feedback(owner, repo):
+    "Update feedback for predicted labels for an owner/repo"
+    # authenticate webhook to make sure it is from GitHub
+    issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
+    issue_numbers = [x.issue_id for x in issues]
 
-def get_issue_handle(installation_id, username, repository, number):
+    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+
+    # grab all the reactions and update the statistics in the database.
+    for prediction in predictions:
+        reactions = get_reactions(owner=owner, repo=repo, comment_id=prediction.comment_id)
+        prediction.likes = reactions['+1']
+        prediction.dislikes = reactions['-1']
+    db.session.commit()
+
+def get_app():
+    "grab a fresh instance of the app handle."
     app_id = 27079
     key_file_path = 'private-key.pem'
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
+    return ghapp
+
+def get_issue_handle(installation_id, username, repository, number):
+    "get an issue object."
+    ghapp = get_app()
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
 
+def get_reactions(owner, repo, comment_id):
+    "get all reactions for an issue comment."
+    ghapp = get_app()
+    return ghapp.get_reactions(owner=owner, repo=repo, comment_id=comment_id)
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
