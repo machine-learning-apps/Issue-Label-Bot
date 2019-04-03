@@ -124,6 +124,19 @@ def index():
         pass
     return 'ok'
 
+@app.route("/data/<string:owner>/<string:repo>")
+def data(owner, repo):
+    issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
+    issue_numbers = [x.issue_id for x in issues]
+
+    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+
+    return render_template("data.html",
+                           results=predictions,
+                           owner=owner,
+                           repo=repo)
+
+
 @app.route("/update_feedback/<string:owner>/<string:repo>")
 def update_feedback(owner, repo):
     "Update feedback for predicted labels for an owner/repo"
@@ -139,6 +152,8 @@ def update_feedback(owner, repo):
         prediction.likes = reactions['+1']
         prediction.dislikes = reactions['-1']
     db.session.commit()
+    print(f'Successfully updated feedback based on reactions for {len(predictions)} predictions in {owner}/{repo}.')
+    return redirect(url_for('data'))
 
 def get_app():
     "grab a fresh instance of the app handle."
@@ -175,5 +190,8 @@ if __name__ == "__main__":
     with app.app_context():
         # create tables if they do not exist
         db.create_all()
-    
+
+    # make sure things reload
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
