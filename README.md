@@ -6,8 +6,8 @@ TODO:
 - [x] Flask app
 - [x] Train models on data
 - [x] Wire it up
-- [ ] Create database
-- [ ] ORM - Database logging
+- [x] Create database
+- [x] ORM - Database logging
 - [ ] Ability to gather feedback (reactions)
 - [ ] User interface
 - [ ] Explore using issue summarization endpoint
