@@ -1,5 +1,6 @@
 import os
 import logging
+from collections import defaultdict
 import hmac
 from flask import (abort, Flask, session, render_template, 
                    session, redirect, url_for, request,
@@ -30,7 +31,12 @@ db.init_app(app)
 
 # Additional Setup inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py
 app.webhook_secret = os.getenv('WEBHOOK_SECRET')
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)    
+
+# set the prediction threshold at .6 for everything except for the label question which has higher threshold of .7
+prediction_threshold = defaultdict(lambda: .6)
+prediction_threshold['question'] = .7
+
 
 def init():
     "Load all necessary artifacts to make predictions."
@@ -38,9 +44,6 @@ def init():
     body_pp_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/body_pp.dpkl'
     model_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/Issue_Label_v1_best_model.hdf5'
     model_filename = 'downloaded_model.hdf5'
-
-    # create tables if they do not exist
-    db.create_all()
 
     #save keyfile
     pem_string = os.getenv('PRIVATE_KEY')
@@ -73,35 +76,54 @@ def index():
 
     # if user tries to login, try to authenticate them using naive approach.
     payload = request.json
-    # Check if payload corresponds to open issue
+
+    # Check if payload corresponds to an issue being opened
     if request.json['action'] == 'opened' and ('issue' in request.json):
         # get metadata
         installation_id = request.json['installation']['id']
-        issue_id = request.json['issue']['number']
+        issue_num = request.json['issue']['number']
         username, repo = request.json['repository']['full_name'].split('/')
         title = request.json['issue']['title']
         body = request.json['issue']['body']
 
+        # write the issue to the database using ORM
+        issue_db_obj = Issues(repo=repo,
+                              username=username,
+                              issue_num=issue_num,
+                              title=title,
+                              body=body)
+        
+        db.session.add(issue_db_obj)
+        db.session.commit()
+        
+        # make predictions with the model
         with app.graph.as_default():
             predictions = app.issue_labeler.get_probabilities(body=body, title=title)
         #log to console
-        print(f'issue opened by {username} in {repo} #{issue_id}: {title} \nbody:\n {body}\n')
+        print(f'issue opened by {username} in {repo} #{issue_num}: {title} \nbody:\n {body}\n')
         print(f'predictions: {str(predictions)}')
 
-        label = None
-        for key in predictions:
-            if predictions[key] >= 0.6:
-                label = key
-                # create message
-                message = f'KFlow-bot has determined with {predictions[key]:.2f} probability that this issue should be labeled as `{key}` and is auto-labeling this issue. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback!'
+        # get the most confident prediction
+        argmax = max(predictions, key=predictions.get)
+        # take an action if the prediction is confident enough
+        if predictions and (predictions[argmax] >= prediction_threshold[argmax]):
+            # create message
+            message = f'KFlow-bot has determined with {predictions[argmax]:.2f} probability that this issue should be labeled as a `{argmax}` and is auto-labeling this issue. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback!'
+            # label the issue and make a comment using the GitHub api
+            issue = get_issue_handle(installation_id, username, repo, issue_num)
+            comment = issue.create_comment(message)
+            issue.add_labels(argmax)
 
-                issue = get_issue_handle(installation_id, username, repo, issue_id)
-                issue.create_comment(message)
-                issue.add_labels(label)
+            # log the prediction to the database using ORM
+            issue_db_obj.add_prediction(comment_id=comment.id,
+                                        prediction=argmax,
+                                        probability=predictions[argmax],
+                                        logs=str(predictions))
 
     else:
         pass
     return 'ok'
+
 
 def get_issue_handle(installation_id, username, repository, number):
     app_id = 27079
@@ -109,6 +131,7 @@ def get_issue_handle(installation_id, username, repository, number):
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
+
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
@@ -123,6 +146,9 @@ def verify_webhook(request):
 
 
 if __name__ == "__main__":
+    init()
     with app.app_context():
-        init()
+        # create tables if they do not exist
+        db.create_all()
+    
     app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT'))
