@@ -12,6 +12,7 @@ class Issues(db.Model):
     issue_num = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String, nullable=False)
     body = db.Column(db.String, nullable=True)
+    # the below statement allows you to call `Predictions.issue` to refer back to the issue
     predictions = db.relationship('Predictions', backref='issue', lazy=True)
 
     def add_prediction(self, comment_id, prediction, probability, logs=None, prediction_type='issue label'):
@@ -30,7 +31,7 @@ class Issues(db.Model):
 class Predictions(db.Model):
     __tablename__ = "predictions"
     prediction_id = db.Column(db.Integer, primary_key=True)
-    issue_id = db.Column(db.Integer, db.ForeignKey("issues.id"), nullable=False)
+    issue_id = db.Column(db.Integer, db.ForeignKey("issues.issue_id"), nullable=False)
     comment_id = db.Column(db.BigInteger, nullable=False)
     prediction = db.Column(db.String, nullable=False)
     probability = db.Column(db.Float, nullable=False)
@@ -39,23 +40,7 @@ class Predictions(db.Model):
     prediction_type = db.Column(db.String, nullable=False)
     logs = db.Column(db.String, nullable=True)
 
-
-
-CREATE TABLE issues (
-    issue_id SERIAL PRIMARY KEY,
-    repo VARCHAR NOT NULL,
-    username VARCHAR NOT NULL,
-    issue_num INTEGER NOT NULL,
-    title VARCHAR NOT NULL,
-    body VARCHAR
-);
-
-CREATE TABLE predictions (
-    prediction_id SERIAL PRIMARY KEY,
-    issue_id INTEGER REFERENCES issues(issue_id),
-    comment_id BIGINT NOT NULL,
-    prediction VARCHAR NOT NULL,
-    probability REAL NOT NULL,
-    likes INTEGER,
-    dislikes INTEGER
-);
+    def update_feedback(self, likes, dislikes):
+        p = Predictions.get(self.prediction_id)
+        p.likes = likes
+        p.dislikes = dislikes
