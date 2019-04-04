@@ -1,6 +1,6 @@
 FROM python:3.6-slim-stretch
 
-RUN apt-get update && sudo apt-get upgrade
+RUN apt-get update && apt-get upgrade
 RUN apt-get install --reinstall build-essential
 RUN apt install -y gcc g++
 
