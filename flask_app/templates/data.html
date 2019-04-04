@@ -23,6 +23,7 @@
     <form action="{{ url_for('data', owner=owner, repo=repo) }}" method="POST">
         <div class="text-center">
             <h4 class="text-center">Data For {{ owner }}/{{ repo }} </h4>
+            <p>Only showing last 50 predictions</p>
             <button style="margin-top:10px; margin-bottom:10px; float:right" type="submit" class="btn btn-primary">Refresh ( <i class="fas fa-thumbs-up"></i>, <i class="fas fa-thumbs-down"></i>) </button>
         </div>
     </form>
@@ -53,7 +54,7 @@
                     </a>
                 </td>
                 <td>{{ result.prediction }}</td>
-                <td>{{ result.probability }}</td>
+                <td>{{ result.probability|round(3, 'common') }}</td>
                 <td>{{ result.likes }}</td>
                 <td>{{ result.dislikes }}</td>
             </tr>
