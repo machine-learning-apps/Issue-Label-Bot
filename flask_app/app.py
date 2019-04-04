@@ -105,8 +105,8 @@ def bot():
         with app.graph.as_default():
             predictions = app.issue_labeler.get_probabilities(body=body, title=title)
         #log to console
-        print(f'issue opened by {username} in {repo} #{issue_num}: {title} \nbody:\n {body}\n')
-        print(f'predictions: {str(predictions)}')
+        LOG.warning(f'issue opened by {username} in {repo} #{issue_num}: {title} \nbody:\n {body}\n')
+        LOG.warning(f'predictions: {str(predictions)}')
 
         # get the most confident prediction
         argmax = max(predictions, key=predictions.get)
@@ -156,7 +156,10 @@ def update_feedback(owner, repo):
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
 
-    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+    # only update last 100 things to prevent edge cases on repos with large number of issues.
+    predictions = (Predictions.query.filter(Predictions.issue_id.in_(issue_numbers))
+                   .limit(100)
+                   .all())
 
     # we only want to get the installation token once for the list of predictions.
     ghapp = get_app()
