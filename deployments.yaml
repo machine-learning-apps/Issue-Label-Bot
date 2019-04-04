@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-github-app
+  labels:
+    app: ml-github-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ml-github-app
+  template:
+    metadata:
+      labels:
+        app: ml-github-app
+    spec:
+      containers:
+      - name: ml-github-app
+        image: hamelsmu/mlapp
+        command: ["python", "app.py"]
