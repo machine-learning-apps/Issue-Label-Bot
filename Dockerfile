@@ -1,5 +1,7 @@
 FROM python:3.6-slim-stretch
 
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update
 RUN apt install -y python3-dev gcc
 
 COPY . /
