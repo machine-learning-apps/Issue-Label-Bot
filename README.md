@@ -1,9 +1,11 @@
 ![Heroku](https://heroku-badge.herokuapp.com/?app=fathomless-forest-27162) [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-:construction: "How to create machine learning products that automate tasks on GitHub for fun and profit" :construction:
+### :construction: "How to create machine learning products that automate tasks on GitHub for fun and profit" :construction:
 
-### [Prediction Dashboard](https://fathomless-forest-27162.herokuapp.com/)
-### [GitHub App Home Page](https://github.com/apps/kflow-bot)
+### Links
+
+ - [Prediction Dashboard](https://fathomless-forest-27162.herokuapp.com/)
+ - [GitHub App Home Page](https://github.com/apps/kflow-bot)
 
 See [these issues](https://github.com/hamelsmu/example-github-app/issues) for examples of auto-labeling behavior.
 
@@ -15,6 +17,6 @@ TODO:
 - [x] ORM - Database logging
 - [x] Ability to gather feedback (reactions)
 - [x] User interface
-- [ ] Explore using issue summarization endpoint
 - [x] Use Heroku or GitHub Actions to Deploy
+- [ ] Find more economical compute or GCP
 - [ ] Blog post :rocket:
