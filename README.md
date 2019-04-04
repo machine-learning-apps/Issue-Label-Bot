@@ -5,7 +5,7 @@
 ### Links
 
  - [Prediction Dashboard](https://fathomless-forest-27162.herokuapp.com/)
- - [GitHub App Home Page](https://github.com/apps/kflow-bot)
+ - GitHub App Home Page For [Issue-Label Bot](https://github.com/apps/issue-label-bot)
 
 See [these issues](https://github.com/hamelsmu/example-github-app/issues) for examples of auto-labeling behavior.
 

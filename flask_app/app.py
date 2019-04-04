@@ -113,7 +113,7 @@ def bot():
         # take an action if the prediction is confident enough
         if predictions and (predictions[argmax] >= prediction_threshold[argmax]):
             # create message
-            message = f'KFlow-bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [Dashboard](https://fathomless-forest-27162.herokuapp.com/data/{username}/{repo}) for predictions. [Code](https://github.com/hamelsmu/MLapp) for this bot.'
+            message = f'Issue-Label Bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard](https://fathomless-forest-27162.herokuapp.com/data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
             # label the issue and make a comment using the GitHub api
             issue = get_issue_handle(installation_id, username, repo, issue_num)
             comment = issue.create_comment(message)
