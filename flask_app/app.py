@@ -6,8 +6,6 @@ from flask import (abort, Flask, session, render_template,
                    session, redirect, url_for, request,
                    flash, jsonify)
 from flask_session import Session
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 from mlapp import GitHubApp
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import get_file
@@ -132,14 +130,18 @@ def bot():
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
-    "Route where users can see the Bot's predictions for a repo"
+    "Route where users can see the Bot's recent predictions for a repo"
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
 
     if request.method == 'POST':
         update_feedback(owner=owner, repo=repo)
 
-    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+    # get the 50 most recent predictions.
+    predictions = (Predictions.query.filter(Predictions.issue_id.in_(issue_numbers))
+                    .order_by(desc(Predictions.issue_id))
+                    .limit(50)
+                    .all())
     
     return render_template("data.html",
                            results=predictions,
@@ -155,9 +157,17 @@ def update_feedback(owner, repo):
 
     predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
 
+    # we only want to get the installation token once for the list of predictions.
+    ghapp = get_app()
+    installation_id = ghapp.get_installation_id(owner=owner, repo=repo)
+    installation_access_token = ghapp.get_installation_access_token(installation_id)
+
     # grab all the reactions and update the statistics in the database.
     for prediction in predictions:
-        reactions = get_reactions(owner=owner, repo=repo, comment_id=prediction.comment_id)
+        reactions = get_reactions(owner=owner, 
+                                  repo=repo, 
+                                  comment_id=prediction.comment_id,
+                                  installation_access_token=installation_access_token)
         prediction.likes = reactions['+1']
         prediction.dislikes = reactions['-1']
     db.session.commit()
