@@ -108,7 +108,7 @@ def index():
         # take an action if the prediction is confident enough
         if predictions and (predictions[argmax] >= prediction_threshold[argmax]):
             # create message
-            message = f'KFlow-bot has determined with {predictions[argmax]:.2f} probability that this issue should be labeled as a `{argmax}` and is auto-labeling this issue. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback!'
+            message = f'KFlow-bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n_Code for this bot is available [here.](https://github.com/hamelsmu/MLapp)_'
             # label the issue and make a comment using the GitHub api
             issue = get_issue_handle(installation_id, username, repo, issue_num)
             comment = issue.create_comment(message)
@@ -124,20 +124,23 @@ def index():
         pass
     return 'ok'
 
-@app.route("/data/<string:owner>/<string:repo>")
+@app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
+    "Route where users can see the Bot's predictions for a repo"
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
 
-    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+    if request.method == 'POST':
+        update_feedback(owner=owner, repo=repo)
 
+    predictions = Predictions.query.filter(Predictions.issue_id.in_(issue_numbers)).all()
+    
     return render_template("data.html",
                            results=predictions,
                            owner=owner,
                            repo=repo)
 
 
-@app.route("/update_feedback/<string:owner>/<string:repo>")
 def update_feedback(owner, repo):
     "Update feedback for predicted labels for an owner/repo"
     # authenticate webhook to make sure it is from GitHub
@@ -153,7 +156,7 @@ def update_feedback(owner, repo):
         prediction.dislikes = reactions['-1']
     db.session.commit()
     print(f'Successfully updated feedback based on reactions for {len(predictions)} predictions in {owner}/{repo}.')
-    return redirect(url_for('data'))
+
 
 def get_app():
     "grab a fresh instance of the app handle."

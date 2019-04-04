@@ -69,7 +69,7 @@ class IssueLabeler:
                  body_text_preprocessor, 
                  title_text_preprocessor, 
                  model, 
-                 class_names=['bug', 'feature', 'question']):
+                 class_names=['bug', 'feature_request', 'question']):
         """
         Parameters
         ----------
