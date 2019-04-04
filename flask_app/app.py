@@ -18,6 +18,7 @@ import tensorflow as tf
 import ipdb
 
 app = Flask(__name__)
+app_url = os.getenv('APP_URL')
 
 # Configure session to use filesystem. Hamel: BOILERPLATE.
 app.config["SESSION_PERMANENT"] = False
@@ -113,7 +114,7 @@ def bot():
         # take an action if the prediction is confident enough
         if predictions and (predictions[argmax] >= prediction_threshold[argmax]):
             # create message
-            message = f'Issue-Label Bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard](https://fathomless-forest-27162.herokuapp.com/data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
+            message = f'Issue-Label Bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard]({app_url}data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
             # label the issue and make a comment using the GitHub api
             issue = get_issue_handle(installation_id, username, repo, issue_num)
             comment = issue.create_comment(message)
@@ -180,7 +181,7 @@ def update_feedback(owner, repo):
 
 def get_app():
     "grab a fresh instance of the app handle."
-    app_id = 27079
+    app_id = os.getenv('APP_ID')
     key_file_path = 'private-key.pem'
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
     return ghapp

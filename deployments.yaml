@@ -18,3 +18,35 @@ spec:
       - name: ml-github-app
         image: hamelsmu/mlapp
         command: ["python", "app.py"]
+        env:
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: PRIVATE_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: DATABASE_URL
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: WEBHOOK_SECRET
+        - name: APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: APP_ID
+        - name: FLASK_ENV
+          value: development
+        - name: PORT
+          value: '3000'
+        - name: APP_URL
+          value: http://146.148.44.166:3000/
+        - name: APP_URL_HEROKU
+          value: https://fathomless-forest-27162.herokuapp.com/
+        ports:
+        - containerPort: 3000
+        - containerPort: 5000
