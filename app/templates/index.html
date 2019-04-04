@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Welcome
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Auto-Labeler For GitHub Issues</h1>
+        <p>A toy example of how to automate tasks on GitHub with machine learning.</p>
+        <a href="https://github.com/hamelsmu/MLapp">See this on <i class="fab fa-github"></i></a>
+    </div>
+    {% if results %}
+    <div class="dropdown text-center">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select repo to view activity
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for result in results %}
+            <a class="dropdown-item" href=" {{ url_for('data', owner=result[1], repo=result[0]) }}">{{ result[1] }}/{{ result[0] }}</a>
+            {% endfor %}  
+        </div>
+    </div>
+    {% endif %} 
+{% endblock %}

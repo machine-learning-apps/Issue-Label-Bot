@@ -66,10 +66,16 @@ def init():
                                      title_text_preprocessor=title_pp,
                                      model=model)
 
+# smee by default sends things to /event_handler route
+@app.route("/", methods=["GET"])
+def index():
+    "Landing page"
+    results = db.engine.execute("SELECT distinct repo, username FROM issues").fetchall()
+    return render_template("index.html", results=results)
 
 # smee by default sends things to /event_handler route
 @app.route("/event_handler", methods=["POST"])
-def index():
+def bot():
     "Handle payload"
     # authenticate webhook to make sure it is from GitHub
     verify_webhook(request)

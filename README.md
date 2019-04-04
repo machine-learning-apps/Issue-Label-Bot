@@ -8,8 +8,8 @@ TODO:
 - [x] Wire it up
 - [x] Create database
 - [x] ORM - Database logging
-- [ ] Ability to gather feedback (reactions)
-- [ ] User interface
+- [x] Ability to gather feedback (reactions)
+- [x] User interface
 - [ ] Explore using issue summarization endpoint
 - [ ] Use Heroku or GitHub Actions to Deploy
 - [ ] Blog post :rocket:
