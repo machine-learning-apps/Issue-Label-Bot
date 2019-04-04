@@ -7,6 +7,7 @@ import json
 import jwt
 import requests
 from tqdm import tqdm
+from typing import List
 
 class GitHubApp(GitHub):
     """
@@ -123,14 +124,16 @@ class GitHubApp(GitHub):
         fields = ['name', 'full_name', 'id']
         return [self._extract(x, fields) for x in response.json()['repositories']]
     
-    def get_reactions(self, owner, repo, comment_id):
+    def get_reactions(self, owner: str, repo: str, comment_id: int, installation_access_token: str):
         """Get a list of reactions.
 
         https://developer.github.com/v3/reactions/#list-reactions-for-a-commit-comment
         """
         url = f'https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}/reactions'
-        installation_id = self.get_installation_id(owner, repo)
-        headers={'Authorization': f'token {self.get_installation_access_token(installation_id)}',
+        # installation_id = self.get_installation_id(owner, repo)
+        # headers={'Authorization': f'token {self.get_installation_access_token(installation_id)}',
+        #          'Accept': 'application/vnd.github.squirrel-girl-preview+json'}
+        headers={'Authorization': f'token {installation_access_token}',
                  'Accept': 'application/vnd.github.squirrel-girl-preview+json'}
         
         response = requests.get(url=url, headers=headers)
@@ -141,6 +144,7 @@ class GitHubApp(GitHub):
         results = [self._extract(x, ['content']) for x in response.json()]
         # count the reactions
         return Counter([x['content'] for x in results])
+
 
     @staticmethod
     def unpack_issues(client, owner, repo, label_only=True):
