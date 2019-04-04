@@ -168,7 +168,7 @@ def update_feedback(owner, repo):
         reactions = get_reactions(owner=owner, 
                                   repo=repo, 
                                   comment_id=prediction.comment_id,
-                                  installation_access_token=installation_access_token)
+                                  iat=installation_access_token)
         prediction.likes = reactions['+1']
         prediction.dislikes = reactions['-1']
     db.session.commit()

@@ -124,7 +124,7 @@ class GitHubApp(GitHub):
         fields = ['name', 'full_name', 'id']
         return [self._extract(x, fields) for x in response.json()['repositories']]
     
-    def get_reactions(self, owner: str, repo: str, comment_id: int, installation_access_token: str):
+    def get_reactions(self, owner: str, repo: str, comment_id: int, iat: str):
         """Get a list of reactions.
 
         https://developer.github.com/v3/reactions/#list-reactions-for-a-commit-comment
@@ -133,7 +133,7 @@ class GitHubApp(GitHub):
         # installation_id = self.get_installation_id(owner, repo)
         # headers={'Authorization': f'token {self.get_installation_access_token(installation_id)}',
         #          'Accept': 'application/vnd.github.squirrel-girl-preview+json'}
-        headers={'Authorization': f'token {installation_access_token}',
+        headers={'Authorization': f'token {iat}',
                  'Accept': 'application/vnd.github.squirrel-girl-preview+json'}
         
         response = requests.get(url=url, headers=headers)
