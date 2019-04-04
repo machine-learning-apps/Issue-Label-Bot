@@ -165,10 +165,10 @@ def update_feedback(owner, repo):
 
     # grab all the reactions and update the statistics in the database.
     for prediction in predictions:
-        reactions = get_reactions(owner=owner, 
-                                  repo=repo, 
-                                  comment_id=prediction.comment_id,
-                                  iat=installation_access_token)
+        reactions = ghapp.get_reactions(owner=owner, 
+                                        repo=repo, 
+                                        comment_id=prediction.comment_id,
+                                        iat=installation_access_token)
         prediction.likes = reactions['+1']
         prediction.dislikes = reactions['-1']
     db.session.commit()
@@ -187,11 +187,6 @@ def get_issue_handle(installation_id, username, repository, number):
     ghapp = get_app()
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
-
-def get_reactions(owner, repo, comment_id):
-    "get all reactions for an issue comment."
-    ghapp = get_app()
-    return ghapp.get_reactions(owner=owner, repo=repo, comment_id=comment_id)
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
