@@ -70,7 +70,7 @@ RUN pip install \
 COPY . /
 RUN pip install -r requirements.txt
 
-EXPOSE 5000 3000
+EXPOSE 3000 80 443
 WORKDIR flask_app/
 
 CMD python app.py
