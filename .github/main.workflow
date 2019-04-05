@@ -9,5 +9,6 @@ action "One Click Docker" {
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
   env = {
     DOCKER_IMAGE_NAME = "mlapp"
+    DOCKER_NAMESPACE = "hamelsmu"
   }
 }
