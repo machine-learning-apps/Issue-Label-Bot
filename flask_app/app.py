@@ -88,6 +88,7 @@ def bot():
         # get metadata
         installation_id = request.json['installation']['id']
         issue_num = request.json['issue']['number']
+        private = request.json['repository']['private']
         username, repo = request.json['repository']['full_name'].split('/')
         title = request.json['issue']['title']
         body = request.json['issue']['body']
@@ -133,6 +134,14 @@ def bot():
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
     "Route where users can see the Bot's recent predictions for a repo"
+
+    if not is_public(owner, repo):
+        return render_template("data.html",
+                               results=[],
+                               owner=owner,
+                               repo=repo,
+                               alert=f'{owner}/{repo} is private. Cannot display data.')
+
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
 
@@ -203,6 +212,9 @@ def verify_webhook(request):
         LOG.warning('GitHub hook signature verification failed.')
         abort(400)
 
+def is_public(owner, repo):
+    "Verify repo is public."
+    return requests.get(f'https://github.com/{owner}/{repo}').status_code == 200
 
 if __name__ == "__main__":
     init()

@@ -14,6 +14,11 @@
     </head>
     <body>
         <div class="container" style="margin-top: 40px;">
+            {% if alert %}
+                <div class="alert alert-primary" role="alert">
+                    {{ alert|safe }}
+                </div>
+            {% endif %}
             {% block body %}
             {% endblock %}
         </div>
