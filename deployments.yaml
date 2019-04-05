@@ -44,7 +44,7 @@ spec:
         - name: PORT
           value: '3000'
         - name: APP_URL
-          value: http://146.148.44.166:3000/
+          value: http://mlbot.net:3000/
         - name: APP_URL_HEROKU
           value: https://fathomless-forest-27162.herokuapp.com/
         ports:

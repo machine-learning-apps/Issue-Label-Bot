@@ -1,22 +1,20 @@
-![Heroku](https://heroku-badge.herokuapp.com/?app=fathomless-forest-27162) [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
-### :construction: "How to create machine learning products that automate tasks on GitHub for fun and profit" :construction:
+Contains code for Medium article: ["How to create machine learning products that automate tasks on GitHub for fun and profit"]()
+
+# Issue-Label Bot
+
+A [GitHub App](https://developer.github.com/apps/) powered by machine learning, written in python.
 
 ### Links
 
- - [Prediction Dashboard](https://fathomless-forest-27162.herokuapp.com/)
- - GitHub App Home Page For [Issue-Label Bot](https://github.com/apps/issue-label-bot)
+ - GitHub App home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot), where you can install this bot your repo.
+
+ - [Prediction Dashboard](http://mlbot.net:3000/) you can see examples of predictions for issues made.
 
 See [these issues](https://github.com/hamelsmu/example-github-app/issues) for examples of auto-labeling behavior.
 
-TODO: 
-- [x] Flask app
-- [x] Train models on data
-- [x] Wire it up
-- [x] Create database
-- [x] ORM - Database logging
-- [x] Ability to gather feedback (reactions)
-- [x] User interface
-- [x] Use Heroku or GitHub Actions to Deploy
-- [ ] Find more economical compute or GCP
-- [ ] Blog post :rocket:
+
+### Notes
+
+Deprecated Heroku Site: [dead link](https://fathomless-forest-27162.herokuapp.com/)
