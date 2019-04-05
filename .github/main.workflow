@@ -5,6 +5,7 @@ workflow "New workflow" {
 
 action "One Click Docker" {
   uses = "pangzineng/Github-Action-One-Click-Docker@v1.1.0"
+  args = "-f deployment/Dockerfile ."
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
   env = {
     DOCKER_IMAGE_NAME = "hamelsmu/mlapp"
