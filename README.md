@@ -1,6 +1,6 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
-Contains code for Medium article: ["How to create machine learning products that automate tasks on GitHub for fun and profit"]()
+Code for Medium article: ["How to create machine learning products that automate tasks on GitHub for fun and profit"]()
 
 # Issue-Label Bot
 
@@ -8,7 +8,7 @@ A [GitHub App](https://developer.github.com/apps/) powered by machine learning, 
 
 ### Links
 
- - GitHub App home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot), where you can install this bot your repo.
+ - GitHub App home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot).
 
  - [Prediction Dashboard](http://mlbot.net:3000/) you can see examples of predictions for issues made.
 
