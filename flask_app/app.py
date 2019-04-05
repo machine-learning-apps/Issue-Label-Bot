@@ -141,7 +141,7 @@ def data(owner, repo):
                                results=[],
                                owner=owner,
                                repo=repo,
-                               error=f'{owner}/{repo} is a private repo. Cannot display data.')
+                               error=f'<span style="font-weight:bold">{owner}/{repo}</span> is a private repo. Cannot display data.')
 
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
@@ -215,7 +215,10 @@ def verify_webhook(request):
 
 def is_public(owner, repo):
     "Verify repo is public."
-    return requests.get(f'https://github.com/{owner}/{repo}').status_code == 200
+    try:
+        return requests.head(f'https://github.com/{owner}/{repo}').status_code == 200
+    except:
+        return False
 
 if __name__ == "__main__":
     init()
