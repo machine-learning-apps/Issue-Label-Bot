@@ -8,7 +8,7 @@ A [GitHub App](https://developer.github.com/apps/) powered by machine learning, 
 
 ### Links
 
- - GitHub App home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot), where you can install this bot your repo.
+ - GitHub App home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot).
 
  - [Prediction Dashboard](http://mlbot.net:3000/) you can see examples of predictions for issues made.
 
