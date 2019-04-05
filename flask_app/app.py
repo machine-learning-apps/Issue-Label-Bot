@@ -94,6 +94,10 @@ def bot():
         title = request.json['issue']['title']
         body = request.json['issue']['body']
 
+        # don't do anything if repo is private.
+        if private:
+            return 'ok'
+
         # write the issue to the database using ORM
         issue_db_obj = Issues(repo=repo,
                               username=username,
@@ -127,10 +131,10 @@ def bot():
                                         prediction=argmax,
                                         probability=predictions[argmax],
                                         logs=str(predictions))
+            return 'ok'
 
     else:
-        pass
-    return 'ok'
+        return 'ok'
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
