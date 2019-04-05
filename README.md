@@ -1,4 +1,5 @@
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![](https://images.microbadger.com/badges/image/hamelsmu/mlapp.svg)](https://microbadger.com/images/hamelsmu/mlapp "Get your own image badge on microbadger.com")
+
 
 [blog]: https://www.google.com/
 
@@ -20,7 +21,7 @@ Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://gith
  - [/notebooks](/notebooks): contains notebooks on how to train the model and interact with the GitHub api uing a python client.
  - [/flask_app](/flask_app): code for a flask app that listens for [GitHub issue events](https://developer.github.com/v3/issues/events/) and responds with predictions.  This is the main application that the user will interact with.
 - [/argo](/argo): the code in this directory relates to the construction of [Argo ML Pipelines](https://argoproj.github.io/) for training and deploying ML workflows. 
-- [Dockerfile](/Dockerfile): this is the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp).
+- [/deployment](/flask_app):[Dockerfile](/Dockerfile): this is the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp).
 - [heroku.yml](/heroku.yml): this is used for [deploying to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime).
 - {[deployments](/deployments.yaml), [service](/service.yaml), [fake-secret](/fake-secret.yaml)}.yaml: these files relate to a Kubernetees deployment.
  
