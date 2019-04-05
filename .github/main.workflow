@@ -8,6 +8,7 @@ action "One Click Docker" {
   args = "-f deployment/Dockerfile ."
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
   env = {
-    DOCKER_IMAGE_NAME = "hamelsmu/mlapp"
+    DOCKER_IMAGE_NAME = "mlapp"
+    DOCKER_NAMESPACE = "hamelsmu"
   }
 }
