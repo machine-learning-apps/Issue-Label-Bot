@@ -8,6 +8,5 @@ action "One Click Docker" {
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
   env = {
     DOCKER_IMAGE_NAME = "hamelsmu/mlapp"
-    BRANCH_FILTER = "docker-build"
   }
 }
