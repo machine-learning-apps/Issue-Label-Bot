@@ -18,7 +18,7 @@ A [GitHub App](https://developer.github.com/apps/) powered by machine learning, 
  - [/notebooks](/notebooks): contains notebooks on how to train the model and interact with the GitHub api uing a python client.
  - [/flask_app](/flask_app): code for a flask app that listens for [GitHub issue events](https://developer.github.com/v3/issues/events/) and responds with predictions.  This is the main application that the user will interact with.
 - [/argo](/argo): the code in this directory relates to the construction of [Argo ML Pipelines](https://argoproj.github.io/) for training and deploying ML workflows. 
-- [Dockerfile](/Dockerfile): this is the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp)
+- [Dockerfile](/Dockerfile): this is the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp).
 - [heroku.yml](/heroku.yml): this is used for [deploying to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime).
 - {[deployments](/deployments.yaml), [service](/service.yaml)}.yaml: these files relate to a Kubernetees deployment.
 - 
