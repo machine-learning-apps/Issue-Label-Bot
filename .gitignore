@@ -1,2 +1,6 @@
 .*
+*.pem
+*.hdf5
+*.pkl
 !.gitignore
+!.dockerignore
