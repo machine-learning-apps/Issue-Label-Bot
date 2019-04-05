@@ -130,6 +130,9 @@ SQLAlchemy = "==1.3.1"
 Unidecode = "==1.0.23"
 Werkzeug = "==0.15.1"
 flask-sqlalchemy = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.6"
