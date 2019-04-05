@@ -20,7 +20,7 @@ A [GitHub App](https://developer.github.com/apps/) powered by machine learning, 
 - [/argo](/argo): the code in this directory relates to the construction of [Argo ML Pipelines](https://argoproj.github.io/) for training and deploying ML workflows. 
 - [Dockerfile](/Dockerfile): this is the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp).
 - [heroku.yml](/heroku.yml): this is used for [deploying to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime).
-- {[deployments](/deployments.yaml), [service](/service.yaml)}.yaml: these files relate to a Kubernetees deployment.
+- {[deployments](/deployments.yaml), [service](/service.yaml), [fake-secret](/fake-secret.yaml)}.yaml: these files relate to a Kubernetees deployment.
 - 
 
 ### Deployment
