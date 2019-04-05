@@ -40,7 +40,7 @@ spec:
               name: ml-app-inference-secret
               key: APP_ID
         - name: FLASK_ENV
-          value: development
+          value: production
         - name: PORT
           value: '3000'
         - name: APP_URL
