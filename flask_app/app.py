@@ -15,6 +15,7 @@ import dill as dpickle
 from urllib.request import urlopen
 from sql_models import db, Issues, Predictions
 import tensorflow as tf
+import requests
 import ipdb
 
 app = Flask(__name__)
@@ -140,7 +141,7 @@ def data(owner, repo):
                                results=[],
                                owner=owner,
                                repo=repo,
-                               alert=f'{owner}/{repo} is private. Cannot display data.')
+                               error=f'{owner}/{repo} is a private repo. Cannot display data.')
 
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
     issue_numbers = [x.issue_id for x in issues]
