@@ -112,7 +112,7 @@ The authors of this project are interested in adding the following features in t
     - State of the art architectures, such as [Multi-Head Attention](https://docs.fast.ai/text.models.html#MultiHeadAttention)
     - Pre-training on a large corpus such as stack overflow and fine tuning that on GitHub issues to predict repo-specific issue labels.  A related project that can help bootstrap this task is [stackroboflow.com](https://stackroboflow.com/about/index.html)
 - Using [GitHub Actions](https://github.com/features/actions) to trigger automated deploys of this code.
-- Model training and pipeline orchestration on [Argo pipelines](https://argoproj.github.io/).
+- Model pipeline orchestration on [Argo pipelines](https://argoproj.github.io/).
 
 
 ## References
