@@ -34,7 +34,7 @@ db.init_app(app)
 app.webhook_secret = os.getenv('WEBHOOK_SECRET')
 LOG = logging.getLogger(__name__)    
 
-# set the prediction threshold at .6 for everything except for the label question which has higher threshold of .7
+# set the prediction threshold for everything except for the label question which has a different threshold
 prediction_threshold = defaultdict(lambda: .55)
 prediction_threshold['question'] = .65
 
