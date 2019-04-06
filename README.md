@@ -26,7 +26,7 @@ Table of Contents
 
 # Issue-Label Bot
 
-A [GitHub App](https://developer.github.com/apps/) powered by machine learning, written in python.  A discussion of the motivation and the overall process of building this app is available in this [blog article][blog].
+A [GitHub App](https://developer.github.com/apps/) powered by machine learning, written in python.  A discussion of the motivation and the overall process of building this app is described in this [blog post][blog].
 
 Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0)
 
