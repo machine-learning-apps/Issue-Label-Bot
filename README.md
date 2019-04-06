@@ -1,9 +1,11 @@
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![License: MIT](https://img.shields.io/badge/License-MIT-darkgreen.svg)](https://opensource.org/licenses/MIT)
+
+
 
 
 [blog]: https://www.google.com/
 
-### Code for: ["How to use machine learning to automate tasks on GitHub for fun and profit"][blog]
+### Code for: ["How to automate tasks on GitHub for fun and profit with machine learning"][blog]
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 Table of Contents
@@ -110,7 +112,7 @@ The authors of this project are interested in adding the following features in t
     - State of the art architectures, such as [Multi-Head Attention](https://docs.fast.ai/text.models.html#MultiHeadAttention)
     - Pre-training on a large corpus such as stack overflow and fine tuning that on GitHub issues to predict repo-specific issue labels.  A related project that can help bootstrap this task is [stackroboflow.com](https://stackroboflow.com/about/index.html)
 - Using [GitHub Actions](https://github.com/features/actions) to trigger automated deploys of this code.
-- Model training and pipeline orchestration on [Argo pipelines](https://argoproj.github.io/).
+- Model pipeline orchestration on [Argo pipelines](https://argoproj.github.io/).
 
 
 ## References
@@ -119,8 +121,8 @@ The authors of this project are interested in adding the following features in t
  - Need inspiration for other data products you can build using machine learning and public GitHub datasets?  See these examples:
     - [GitHub issue summarization](https://towardsdatascience.com/how-to-create-data-products-that-are-magical-using-sequence-to-sequence-models-703f86a231f8) and recommendation.
     - Natural language [semantic code search](https://towardsdatascience.com/semantic-code-search-3cd6d244a39c).
-- My favorite course on flask: [HarvardX CS50 Web](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript).
-- My favorite MOOCs by [fastai](https://www.fast.ai/) for [machine learning](http://course18.fast.ai/ml) and [deep learning](http://course.fast.ai/).
+- Excellent course on flask: [HarvardX CS50 Web](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript).
+- MOOCs by [fastai](https://www.fast.ai/) for [machine learning](http://course18.fast.ai/ml) and [deep learning](http://course.fast.ai/).
 
 # Disclaimers
 
