@@ -4,3 +4,4 @@
 *.pkl
 !.gitignore
 !.dockerignore
+**/flask_session
