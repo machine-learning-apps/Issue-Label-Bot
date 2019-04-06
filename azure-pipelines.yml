@@ -20,3 +20,7 @@ steps:
 - script: docker login -u $(docker_username) -p $(docker_password)
   displayName: 'docker login'
   continueOnError: false
+
+- script: docker push $(imageName)
+  displayName: 'docker push'
+  continueOnError: false
