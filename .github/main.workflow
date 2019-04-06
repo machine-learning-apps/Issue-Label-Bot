@@ -10,5 +10,6 @@ action "One Click Docker" {
   env = {
     DOCKER_IMAGE_NAME = "mlapp"
     DOCKER_NAMESPACE = "hamelsmu"
+    BRANCH_FILTER = "master"
   }
 }
