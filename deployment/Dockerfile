@@ -66,9 +66,9 @@ RUN pip install \
     scikit-learn==0.20.3 \
     tensorflow==1.12.0
 
-
-COPY . /
+COPY requirements.txt .
 RUN pip install -r requirements.txt
+COPY flask_app flask_app/
 
 EXPOSE 3000 80 443
 WORKDIR flask_app/
