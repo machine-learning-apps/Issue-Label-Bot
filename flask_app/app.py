@@ -72,7 +72,12 @@ def init():
 def index():
     "Landing page"
     results = db.engine.execute("SELECT distinct repo, username FROM issues").fetchall()
-    return render_template("index.html", results=results)
+    num_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
+    num_repos = f'{len(results):,}'
+    return render_template("index.html", 
+                           results=results, 
+                           num_users=num_users, 
+                           num_repos=num_repos)
 
 # smee by default sends things to /event_handler route
 @app.route("/event_handler", methods=["POST"])
