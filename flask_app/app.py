@@ -35,8 +35,8 @@ app.webhook_secret = os.getenv('WEBHOOK_SECRET')
 LOG = logging.getLogger(__name__)    
 
 # set the prediction threshold at .6 for everything except for the label question which has higher threshold of .7
-prediction_threshold = defaultdict(lambda: .6)
-prediction_threshold['question'] = .7
+prediction_threshold = defaultdict(lambda: .55)
+prediction_threshold['question'] = .65
 
 
 def init():
