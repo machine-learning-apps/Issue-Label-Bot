@@ -16,3 +16,7 @@ steps:
 - script: docker build -f deployment/Dockerfile -t $(imageName) .
   displayName: 'docker build'
   continueOnError: false
+
+- script: docker login -u $(docker_username) -p $(docker_password)
+  displayName: 'docker login'
+  continueOnError: false
