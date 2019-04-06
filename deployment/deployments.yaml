@@ -47,6 +47,8 @@ spec:
           value: https://mlbot.net/
         - name: APP_URL_HEROKU
           value: https://fathomless-forest-27162.herokuapp.com/
+        - name: authors
+          value: inc0-hamelsmu
         ports:
         - containerPort: 443
         - containerPort: 80
