@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-github-app
+  namespace: mlapp
   labels:
     app: ml-github-app
 spec:
