@@ -2,3 +2,4 @@
 *.pem
 *.hdf5
 *.pkl
+**/flask_session
