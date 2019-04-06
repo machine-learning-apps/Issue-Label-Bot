@@ -103,4 +103,4 @@ The authors of this project are interested in adding the following features in t
 
 # Disclaimers
 
-[Issue-Label Bot](https://github.com/apps/issue-label-bot) is for educational and demonstration purposes only.  This application may be discontinued at any time, but it is our intention to keep it running as long as possible!  This app will only function for public repositories.
+[Issue-Label Bot](https://github.com/apps/issue-label-bot) is for educational and demonstration purposes only.  Furthermore, **this app only works on public repositories and will do nothing if installed on a private repo.**
