@@ -121,8 +121,8 @@ The authors of this project are interested in adding the following features in t
  - Need inspiration for other data products you can build using machine learning and public GitHub datasets?  See these examples:
     - [GitHub issue summarization](https://towardsdatascience.com/how-to-create-data-products-that-are-magical-using-sequence-to-sequence-models-703f86a231f8) and recommendation.
     - Natural language [semantic code search](https://towardsdatascience.com/semantic-code-search-3cd6d244a39c).
-- My favorite course on flask: [HarvardX CS50 Web](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript).
-- My favorite MOOCs by [fastai](https://www.fast.ai/) for [machine learning](http://course18.fast.ai/ml) and [deep learning](http://course.fast.ai/).
+- Excellent course on flask: [HarvardX CS50 Web](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript).
+- MOOCs by [fastai](https://www.fast.ai/) for [machine learning](http://course18.fast.ai/ml) and [deep learning](http://course.fast.ai/).
 
 # Disclaimers
 
