@@ -33,7 +33,7 @@ Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://gith
 ## Important links
 
  - GitHub home page For [Issue-Label Bot](https://github.com/apps/issue-label-bot), where you can install the app. See [disclaimers](#Disclaimers) below before installing.
- - [Prediction Dashboard](http://mlbot.net:3000/): examples of label predictions for issues.
+ - [Prediction Dashboard](https://mlbot.net): examples of label predictions for issues.
  
 ## Files
  
