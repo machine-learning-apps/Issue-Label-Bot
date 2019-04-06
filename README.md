@@ -3,7 +3,24 @@
 
 [blog]: https://www.google.com/
 
-Code for: ["How to create machine learning products that automate tasks on GitHub for fun and profit"][blog]
+## Code for: ["How to create machine learning products that automate tasks on GitHub for fun and profit"][blog]
+
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+Table of Contents
+
+- [Issue-Label Bot](#issue-label-bot)
+	- [Important links](#important-links)
+	- [Files](#files)
+- [Running This Code](#running-this-code)
+	- [Environment Variables](#environment-variables)
+	- [Run Locally](#run-locally)
+	- [Deploy As A Service](#deploy-as-a-service)
+- [Contributing](#contributing)
+	- [Roadmap](#roadmap)
+	- [References](#references)
+- [Disclaimers](#disclaimers)
+
+<!-- /TOC -->
 
 # Issue-Label Bot
 
@@ -26,7 +43,7 @@ Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://gith
     - [heroku.yml](/heroku.yml): this is used for [deploying to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime).
     - *.yaml: these files relate to a Kubernetees deployment.
  
- # Running This Code
+# Running This Code
 
  ## Prerequisites
 
@@ -59,18 +76,22 @@ Finally, you need to create environment variables for all the secrets, which is 
 5. `PORT`: this is the port your app will be serving on.  Note that if you are deploying to Heroku, Heroku will override this variable with their own value when building your app.  For local development, you will want this to match the [port Smee is serving to](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment/#step-1-start-a-new-smee-channel).
 6. `APP_URL`: this is the url for the homepage of your app that is provided to users as a link in issue comments.  You can set this to an arbitrary value for local development.
 
-Note: I use the [dotenv](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/dotenv) plugin for [zsh](http://www.zsh.org/) to manage environment variables.
+Note: If you are using [zsh](http://www.zsh.org/), the [dotenv](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/dotenv) plugin can be useful for managing environment variables.
 
 ## Run Locally
 
-TODO
+1. **Install Dependencies**: Install [requirements.txt](/requirements.txt) into a virtual environment.  If you are using [pipenv](https://pipenv.readthedocs.io/en/latest/) install the necessary dependencies from [Pipfile.lock](/Pipenv.lock) by typing `pipenv install` in the root of this repository.
+
+2. **Run the flask app**: run `python flask_app/app.py` from the root of this repository.  For this to work, you must correctly set the environment variables as described in the [Environment Variables](#Environment-Variables) section.
+
+3. Optional - **Run app as docker container**.  A Docker container that serves [Issue-Label Bot](https://github.com/apps/issue-label-bot) can be built with the command `bash script/bootstrap` from the root of this repository.  This script builds a Docker image named `hamelsmu/mlapp`, which is also available [on Dockerhub](https://hub.docker.com/r/hamelsmu/mlapp).  If you desire to run the Docker container locally for testing, you must [pass the necessary environment variables](https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers) to the Docker container at runtime, as well as expose necessary ports for the app. See the [References](#References) section for more resources on using Docker.
 
 
 ## Deploy As A Service
 
-The assets in this repo allow you to [deploy to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime) (easier) or a Kubernetees cluster (more advanced).  There are several environment variables that you must pass to the flask app if you wish to run the app:
+The assets in this repo allow you to [deploy to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime) (easier) or a Kubernetees cluster (more advanced).  
 
-In Heroku, secrets can be passed in as [configuration variables](https://devcenter.heroku.com/articles/config-vars).  Furthermore, [this documentation](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) describes how you can set secrets in Kubernetees.
+In Heroku, secrets can be passed in as [configuration variables](https://devcenter.heroku.com/articles/config-vars).  Furthermore, [this documentation](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) describes how you can set secrets in Kubernetees.  Make sure you set the environment variable `FLASK_ENV` to `production` if you are going to deploy the app publicly.
 
 
 # Contributing
