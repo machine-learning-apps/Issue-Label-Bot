@@ -3,7 +3,7 @@
 
 [blog]: https://www.google.com/
 
-### Code for: ["How to create data products that automate tasks on GitHub for fun and profit"][blog]
+### Code for: ["How to use machine learning to automate tasks on GitHub for fun and profit"][blog]
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 Table of Contents
@@ -24,7 +24,7 @@ Table of Contents
 
 # Issue-Label Bot
 
-A [GitHub App](https://developer.github.com/apps/) powered by machine learning, written in python.  A detailed discussion behind the motivation for this app and an explanation of the components are located in the [blog article][blog] mentioned above.
+A [GitHub App](https://developer.github.com/apps/) powered by machine learning, written in python.  A discussion of the motivation and the overall process of building this app is available in this [blog article][blog].
 
 Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0)
 
