@@ -1,0 +1,6 @@
+FROM python:3.6
+
+RUN pip install numpy pandas scikit-learn dill tensorflow dask ktext
+RUN mkdir /data
+RUN mkdir /output
+COPY src /src

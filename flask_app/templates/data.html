@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Issue Label Predictions
+{% endblock %}
+
+{% block body %}
+<div class="container"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-light">
+        <ul class="navbar-nav">
+            <li>
+                <h4>View Bot Predictions</h4>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('index') }}" style="color:blue">
+                    Back To Main Page
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <a class="nav-link" href="https://github.com/hamelsmu/MLapp/" style="color:grey">
+                See App On 
+                <i class="fab fa-github"></i>
+            </a>
+        </ul>
+    </nav>
+    <br>
+    <form action="{{ url_for('data', owner=owner, repo=repo) }}" method="POST">
+        <div class="text-center">
+            {% if num_issues > 0  %}
+            <h4 class="text-center">Data For {{ owner }}/{{ repo }} </h4>
+            {% if results %}
+            <p>Only showing last 50 predictions</p>
+            <button style="margin-top:10px; margin-bottom:10px; float:right" type="submit" class="btn btn-primary">Refresh ( <i class="fas fa-thumbs-up"></i>, <i class="fas fa-thumbs-down"></i>) </button>
+            {% endif %}
+            {% endif %}
+        </div>
+    </form>
+    {% if not results and num_issues > 0 %}
+    <p style="color:indianred">Issue Label Bot has observed <span style="font-weight:bold">{{ num_issues }} issue(s)</span> that have been opened since you installed the app.  However, it has not been confident enough to label any of them! <span style="color:black">Issue Label Bot will only make a prediction when it is sufficiently confident that the issue is either a feature request, bug, or question.</span></p>
+    {% endif %} 
+    {% if results %}
+        <br>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Issue_Number</th>
+                <th scope="col">Title</th>
+                <th scope="col">Body</th>
+                <th scope="col">Link</th>
+                <th scope="col">Prediction</th>
+                <th scope="col">Confidence</th>
+                <th scope="col"><i class="fas fa-thumbs-up"></th>
+                <th scope="col"><i class="fas fa-thumbs-down"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.issue.issue_num }}</td>
+                <td>{{ result.issue.title }}</td>
+                <td>{{ result.issue.body | truncate(250) }}</td>
+                <td>
+                    <a class="nav-link" href="https://github.com/{{ result.issue.username }}/{{ result.issue.repo }}/issues/{{ result.issue.issue_num }}" style="color:grey">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </td>
+                <td>{{ result.prediction }}</td>
+                <td>{{ result.probability|round(3, 'common') }}</td>
+                <td>{{ result.likes }}</td>
+                <td>{{ result.dislikes }}</td>
+            </tr>
+            {% endfor %}  
+            </tbody>
+        </table>
+    {% endif %} 
+</div>
+{% endblock %}

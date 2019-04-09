@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Issue Label Bot
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron text-center bg-dark text-white">
+        <h1 class="display-4"><i class="fas fa-robot"></i> Issue Label Bot</h1>
+        <p>A bot that labels GitHub issues automatically with machine learning.</p>
+        <p>Written by <a href="https://github.com/hamelsmu"> <span style="color:rgb(150, 214, 249)">@hamelsmu</span></a> and <a href="https://github.com/inc0"><span style="color:rgb(150, 214, 249)">@inc0</span></a></p>
+        <p>Stats: <span style="color: rgb(245, 196, 196)"><span style="font-weight:bold">{{ num_repos }}</span> repos, <span style="font-weight:bold">{{ num_users }}</span> unique users and <span style="font-weight:bold">{{ num_predictions }}</span> predictions.</span></p>
+        <span style="color:grey">Must have installed the app and opened at least 1 issue to be included in the stats.</span>
+    </div>
+    <div class="row  my-flex-card">
+        <div class="col-sm-12">
+            <p class="lead">This bot is meant to serve as an example of how to use machine learning to automate tasks on GitHub. See this <a href="https://github.com/hamelsmu">this blog post</a> for more details. Issue Label Bot automatically labels issues as either a feature request, bug or question (we will add more labels and functionality over time).  The bot will only make a prediction when it is sufficiently confident and may not label every issue.</p>
+        </div>
+        <div class="col-sm-4">
+            <div class="card bg-light mb-3 h-100" style="width: 100%">
+                <div class="card-body">
+                    <h3 class="card-title"><a href="https://github.com/apps/issue-label-bot"><i class="fas fa-cog"></i> Install this app</a> </h3>
+                    <p class="card-text">Only works on public GitHub repos.</p>
+                    <p class="card-text">This app will not make predictions on private repositories, even if already installed on them.</p>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card bg-light mb-3 h-100" style="width: 100%">
+                <div class="card-body">
+                    <h3 class="card-title"><a href="https://github.com/hamelsmu/MLapp">See the code on <i class="fab fa-github"></i></a> </h3>
+                    <p class="card-text">Includes the code for this website, the GitHub app, and model training steps.</p>
+                    <p class="card-text">Pull requests are welcome! Please see the <a href="https://github.com/hamelsmu/MLapp/issues">contributing</a> section of our README for more information.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card bg-light mb-3 h-100" style="width: 100%">
+                <div class="card-body align-items-center">
+                    <h3 class="card-title"><i class="fas fa-database"></i> View Predictions</h3>
+                    <p class="card-text" style=>Predictions (if they exist) can be viewed at <span style="color:rgb(160, 106, 19)">https://mlbot.net/data/{owner}/{repo}</span></p>  
+                    <p class="card-text">See example predictions from random repos from the drop down menu below:</p>
+                    {% if results %}
+                    <div class="dropdown text-center">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Select a repo
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for result in results %}
+                            <a class="dropdown-item" href=" {{ url_for('data', owner=result[1], repo=result[0]) }}">{{ result[1] }}/{{ result[0] }}</a>
+                            {% endfor %}  
+                        </div>
+                    </div>
+                    {% endif %} 
+                    <br>
+                     
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

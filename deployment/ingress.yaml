@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ml-gh-app
+  namespace: mlapp
+spec:
+  backend:
+    serviceName: ml-github-app
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ml-github-app
+          servicePort: 3000

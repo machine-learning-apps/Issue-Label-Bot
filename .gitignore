@@ -1,0 +1,7 @@
+.*
+*.pem
+*.hdf5
+*.pkl
+!.gitignore
+!.dockerignore
+**/flask_session

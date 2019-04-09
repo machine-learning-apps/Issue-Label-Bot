@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName:  mlapp-
+  labels:
+    workflow: mlapp 
+spec:
+  entrypoint: mlapp 
+  templates:
+  - name: mlapp 
+    dag:
+      tasks:
+      - name: preprocess
+        template: preprocess
+
+      - name: model1
+        dependencies: [preprocess]
+        template: train
+        arguments:
+          artifacts:
+          - name: dataset
+            from: "{{tasks.preprocess.outputs.artifacts.dataset}}"
+
+  - name: preprocess
+    container:
+      image: analytics-kubelet-055005d.private-us-east-1.github.net:30550/mlapp:latest
+      name: preprocess
+      command: ["python", "/src/preprocess.py"]
+    outputs:
+     artifacts:
+     - name: dataset
+       path: /data
+
+  - name: train
+    inputs:
+      artifacts:
+      - name: dataset
+        path: /data
+    outputs:
+     artifacts:
+     - name: model
+       path: /output
+    container:
+      image: analytics-kubelet-055005d.private-us-east-1.github.net:30550/mlapp:latest
+      name: trainer
+      command: ["python", "/src/train.py"]
