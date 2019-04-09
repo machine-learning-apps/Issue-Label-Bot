@@ -24,7 +24,7 @@ Table of Contents
 
 <!-- /TOC -->
 
-Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0)
+Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0), [@jlewi](https://github.com/jlewi)
 
 
 # Issue-Label Bot
