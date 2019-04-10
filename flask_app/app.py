@@ -89,7 +89,7 @@ def bot():
     verify_webhook(request)
 
     # Check if payload corresponds to an issue being opened
-    if request.json['action'] == 'opened' and ('issue' in request.json):
+    if 'action' in request.json and request.json['action'] == 'opened' and ('issue' in request.json):
         # get metadata
         installation_id = request.json['installation']['id']
         issue_num = request.json['issue']['number']
