@@ -3,7 +3,7 @@
 
 
 
-[blog]: https://medium.com/@hamelhusain/mlapp-419f90e8f007
+[blog]: https://medium.com/@hamelhusain/mlapp-419f90e8f007?source=friends_link&sk=760e18a2d6e60999d7eb2887352a92a8
 
 ### Code for: ["How to automate tasks on GitHub with machine learning for fun and profit"][blog]
 
