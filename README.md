@@ -3,7 +3,7 @@
 
 
 
-[blog]: https://www.google.com/
+[blog]: https://medium.com/@hamelhusain/mlapp-419f90e8f007
 
 ### Code for: ["How to automate tasks on GitHub with machine learning for fun and profit"][blog]
 
