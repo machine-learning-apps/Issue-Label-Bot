@@ -136,4 +136,4 @@ The authors of this project are interested in adding the following features in t
 
 # Disclaimers
 
-[Issue-Label Bot](https://github.com/apps/issue-label-bot) is for educational and demonstration purposes only.  Our primary goal was to construct a minimal working example for the community. Therefore, we believe the model demonstrated has great room from improvement and is expected to make many mistakes.  Furthermore, **this app only works on public repositories and will do nothing if installed on a private repo.**
+[Issue-Label Bot](https://github.com/apps/issue-label-bot) is for educational and demonstration purposes only.  Our goal was to provide a minimal working example for the community with the least amount of complexity as possible. Therefore, we believe the model demonstrated has great room from improvement.  Furthermore, **this app only works on public repositories and will do nothing if installed on a private repo.**
