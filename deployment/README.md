@@ -1,5 +1,10 @@
 # Deploying MLApp
 
+This directory contains manifests for the backend of the mlapp associated
+with mlbot.net.
+
+This is currently running on a GKE cluster.
+
 
 ## github-probots
 
