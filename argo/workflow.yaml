@@ -26,6 +26,9 @@ spec:
       image: analytics-kubelet-055005d.private-us-east-1.github.net:30550/mlapp:latest
       name: preprocess
       command: ["python", "/src/preprocess.py"]
+      env:
+        - name: DASK_SCHEDULER_ADDRESS
+          value: my-dask-scheduler:8786
     outputs:
      artifacts:
      - name: dataset
@@ -41,6 +44,9 @@ spec:
      - name: model
        path: /output
     container:
-      image: analytics-kubelet-055005d.private-us-east-1.github.net:30550/mlapp:latest
+      image: analytics-kubelet-055005d.private-us-east-1.github.net:30550/mlapp-gpu:latest
       name: trainer
+      resources:
+        requests:
+          nvidia.com/gpu: 1 # requesting 1 GPU
       command: ["python", "/src/train.py"]
