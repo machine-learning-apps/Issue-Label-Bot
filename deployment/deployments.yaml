@@ -19,6 +19,12 @@ spec:
       - name: ml-github-app
         image: hamelsmu/mlapp
         command: ["python", "app.py"]
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 3
         env:
         - name: PRIVATE_KEY
           valueFrom:
@@ -49,7 +55,7 @@ spec:
         - name: APP_URL_HEROKU
           value: https://fathomless-forest-27162.herokuapp.com/
         - name: authors
-          value: mjh
+          value: e
         ports:
         - containerPort: 443
         - containerPort: 80
