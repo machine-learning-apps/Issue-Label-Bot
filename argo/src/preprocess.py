@@ -3,7 +3,10 @@ import dask.dataframe as df
 from dask_ml.preprocessing import OneHotEncoder
 import numpy as np
 from keras.utils.np_utils import to_categorical
+from dask.distributed import Client
 import time
+import json
+import os
 
 from sklearn.model_selection import train_test_split
 from typing import Callable, List
@@ -17,20 +20,17 @@ from collections import Counter
 from collections import defaultdict
 import h5py
 
+client = Client(os.getenv("DASK_SCHEDULER_ADDRESS"))
 
 start_time = time.time()
-
-dask.config.set(scheduler='processes')
 
 output_dir = "/data/"
 
 base_url = 'https://storage.googleapis.com/codenet/issue_labels/'
-dd = df.from_pandas(pd.concat([pd.read_csv(base_url+f'00000000000{i}.csv.gz') for i in range(10)]), npartitions=128)
-
-print(dd.head())
+dd = df.from_pandas(pd.concat([pd.read_csv(base_url+f'00000000000{i}.csv.gz') for i in range(10)]), npartitions=1024)
 
 def textacy_cleaner(text: str) -> str:
-    """
+    """a
     Defines the default function for cleaning text.
 
     This function operates over a list.
@@ -50,7 +50,11 @@ def textacy_cleaner(text: str) -> str:
 
 
 def process_document(doc: str) -> List[str]:
+    if doc and len(doc) > 20000:
+        return ["_start_", "", "_end_"]
     doc = text_to_word_sequence(textacy_cleaner(doc))
+    if len(doc) > 1000:
+        return ["_start_", "", "_end_"]
     return ["_start_"] + doc + ["_end_"]
 
 
@@ -69,56 +73,94 @@ def to_one_hot(df):
 
 targets = dd["class_int"].to_frame().map_partitions(to_one_hot)
 
-body_quant = int(bodies_parsed.apply(len).quantile(q=0.75).compute())
-title_quant = int(titles_parsed.apply(len).quantile(q=0.75).compute())
+body_quant = int(bodies_parsed.apply(len).quantile(q=0.85).compute())
+title_quant = int(titles_parsed.apply(len).quantile(q=0.85).compute())
+
+print(f"Quantiles title-{title_quant} body-{body_quant} ")
+
+def drop_long_docs(doc, max_len):
+    if len(doc) > max_len:
+        return doc[:max_len]
+    return doc
+
+bodies_parsed = bodies_parsed.apply(drop_long_docs, max_len=body_quant)
+titles_parsed = titles_parsed.apply(drop_long_docs, max_len=title_quant)
 
 def count_words(partition):
     c = Counter()
     def count(p):
         c.update(p)
         return c
-    return partition.apply(count).iloc[0]
+    ct = Counter()
+    ct.update(dict(partition.apply(count).iloc[0].most_common(n=8000)))
+    return ct
+
+
+now = time.time() - start_time
+print(f"quantiles done {now}")
+
 
 body_counts = bodies_parsed.map_partitions(count_words).compute()
+now = time.time() - start_time
+print(f"body counts computed {now}")
 body_counts = sum(body_counts.tolist(), Counter())
-
+now = time.time() - start_time
+print(f"body-counts done {now}")
 title_counts = titles_parsed.map_partitions(count_words).compute()
 title_counts = sum(title_counts.tolist(), Counter())
 
+now = time.time() - start_time
+print(f"counting words body {now}")
 
 words_to_keep_body = body_counts.most_common(n=8000)
 body_vocab = defaultdict(lambda: 1)
 body_vocab.update({x:i+2 for i, x in enumerate([x[0] for x in words_to_keep_body])})
 
+now = time.time() - start_time
+print(f"counting words title {now}")
 words_to_keep_title = title_counts.most_common(n=4500)
 titles_vocab = defaultdict(lambda: 1)
 titles_vocab.update({x:i+2 for i, x in enumerate([x[0] for x in words_to_keep_title])})
 
+now = time.time() - start_time
+print(f"words counted {now}")
+
 numer_bodies = bodies_parsed.apply(lambda x: [body_vocab[w] for w in x])
 numer_titles = titles_parsed.apply(lambda x: [titles_vocab[w] for w in x])
 
-def pad_partition(numerized_doc):
+def pad_partition(numerized_doc, max_len):
     if type(numerized_doc) != list:
         return
-    return pad_sequences([numerized_doc], maxlen=body_quant, truncating='post')[0]
+    return pad_sequences([numerized_doc], maxlen=max_len, truncating='post')[0]
 
-processed_bodies = numer_bodies.apply(pad_partition)
-processed_titles = numer_titles.apply(pad_partition)
-
-num_titles = processed_titles.count().compute()
-num_bodies = processed_bodies.count().compute()
+processed_bodies = numer_bodies.apply(pad_partition, max_len=body_quant)
+processed_titles = numer_titles.apply(pad_partition, max_len=title_quant)
 
 now = time.time() - start_time
 print(f"saving {now}")
 
-processed_titles = da.stack(processed_titles.values.compute())
-processed_bodies = da.stack(processed_bodies.values.compute())
+processed_titles = np.stack(processed_titles.values.compute())
+processed_bodies = np.stack(processed_bodies.values.compute())
 
-f = h5py.File('/data/output.hdf5', 'w')
-f.create_dataset('/titles', data=processed_titles.compute())
-f.create_dataset('/bodies', data=processed_bodies.compute())
-f.create_dataset('/targets', data=targets.compute())
+now = time.time() - start_time
+print(f"creating hdf5 {now}")
+
+
+f = h5py.File('/data/dataset.hdf5', 'w')
+f.create_dataset('/titles', data=processed_titles)
+f.create_dataset('/bodies', data=processed_bodies)
+f.create_dataset('/targets', data=targets)
 f.close()
+
+with open("/data/metadata.json", "w") as f:
+    meta = {
+        'body_vocab_size': len(body_vocab),
+        'title_vocab_size': len(titles_vocab),
+        'issue_body_doc_length': body_quant,
+        'issue_title_doc_length': title_quant,
+    }
+    f.write(json.dumps(meta))
+
 
 now = time.time() - start_time
 print(f"saved {now}")
