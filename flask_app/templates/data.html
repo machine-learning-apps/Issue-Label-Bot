@@ -47,13 +47,13 @@
         <table class="table">
             <thead>
               <tr>
-                <th scope="col">Issue_Number</th>
+                <th scope="col">#</th>
                 <th scope="col">Title</th>
                 <th scope="col">Body</th>
                 <th scope="col">Link</th>
                 <th scope="col">Prediction</th>
                 <th scope="col">Confidence</th>
-                <th scope="col">Auto Labeled?</th>
+                <th scope="col">Labeled?</th>
                 <th scope="col"><i class="fas fa-thumbs-up"></th>
                 <th scope="col"><i class="fas fa-thumbs-down"></i></th>
               </tr>
@@ -63,14 +63,14 @@
             <tr>
                 <td>{{ result.issue.issue_num }}</td>
                 <td>{{ result.issue.title }}</td>
-                <td>{{ result.issue.body | truncate(250) }}</td>
+                <td>{{ result.issue.body | truncate(100) }}</td>
                 <td>
                     <a class="nav-link" href="https://github.com/{{ result.issue.username }}/{{ result.issue.repo }}/issues/{{ result.issue.issue_num }}" style="color:grey">
                         <i class="fab fa-github"></i>
                     </a>
                 </td>
                 <td>{{ result.prediction }}</td>
-                <td>{{ result.probability|round(3, 'common') }}</td>
+                <td>{{ result.probability|round(2, 'common') }}</td>
                 <td>{{ result.labeled }}</td>
                 <td>{{ result.likes }}</td>
                 <td>{{ result.dislikes }}</td>
