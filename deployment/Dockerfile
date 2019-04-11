@@ -64,7 +64,8 @@ RUN pip install \
     pandas==0.24.2 \
     pyarrow==0.12.1 \
     scikit-learn==0.20.3 \
-    tensorflow==1.12.0
+    tensorflow==1.12.0 \
+    seldon-core==0.2.6
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt

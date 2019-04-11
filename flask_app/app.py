@@ -2,7 +2,7 @@ import os
 import logging
 from collections import defaultdict
 import hmac
-from flask import (abort, Flask, session, render_template, 
+from flask import (abort, Flask, session, render_template,
                    session, redirect, url_for, request,
                    flash, jsonify)
 from flask_session import Session
@@ -32,40 +32,45 @@ db.init_app(app)
 
 # Additional Setup inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py
 app.webhook_secret = os.getenv('WEBHOOK_SECRET')
-LOG = logging.getLogger(__name__)    
+LOG = logging.getLogger(__name__)
 
 # set the prediction threshold for everything except for the label question which has a different threshold
 prediction_threshold = defaultdict(lambda: .52)
 prediction_threshold['question'] = .60
 
-
-def init():
+def init_issue_labeler():
     "Load all necessary artifacts to make predictions."
     title_pp_url = "https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/title_pp.dpkl"
     body_pp_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/body_pp.dpkl'
     model_url = 'https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/Issue_Label_v1_best_model.hdf5'
     model_filename = 'downloaded_model.hdf5'
 
-    #save keyfile
-    pem_string = os.getenv('PRIVATE_KEY')
-    if not pem_string:
-        raise ValueError('Environment variable PRIVATE_KEY was not supplied.')
-    
-    with open('private-key.pem', 'wb') as f:
-        f.write(str.encode(pem_string))
 
     with urlopen(title_pp_url) as f:
         title_pp = dpickle.load(f)
 
     with urlopen(body_pp_url) as f:
         body_pp = dpickle.load(f)
-    
+
     model_path = get_file(fname=model_filename, origin=model_url)
     model = load_model(model_path)
+
+    return IssueLabeler(body_text_preprocessor=body_pp,
+                        title_text_preprocessor=title_pp,
+                        model=model)
+
+def init():
+    "Load all necessary artifacts to make predictions."
+    #save keyfile
+    pem_string = os.getenv('PRIVATE_KEY')
+    if not pem_string:
+        raise ValueError('Environment variable PRIVATE_KEY was not supplied.')
+
+    with open('private-key.pem', 'wb') as f:
+        f.write(str.encode(pem_string))
+
     app.graph = tf.get_default_graph()
-    app.issue_labeler = IssueLabeler(body_text_preprocessor=body_pp,
-                                     title_text_preprocessor=title_pp,
-                                     model=model)
+    app.issue_labeler = init_issue_labeler()
 
 # smee by default sends things to /event_handler route
 @app.route("/", methods=["GET"])
@@ -75,9 +80,9 @@ def index():
     num_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
-    return render_template("index.html", 
-                           results=results, 
-                           num_users=num_users, 
+    return render_template("index.html",
+                           results=results,
+                           num_users=num_users,
                            num_repos=num_repos,
                            num_predictions=num_predictions)
 
@@ -108,10 +113,10 @@ def bot():
                               issue_num=issue_num,
                               title=title,
                               body=body)
-        
+
         db.session.add(issue_db_obj)
         db.session.commit()
-        
+
         # make predictions with the model
         with app.graph.as_default():
             predictions = app.issue_labeler.get_probabilities(body=body, title=title)
@@ -165,7 +170,7 @@ def data(owner, repo):
 
     num_issues = len(issues)
     num_predictions = len(predictions)
-    
+
     return render_template("data.html",
                            results=predictions,
                            num_issues=num_issues,
@@ -192,8 +197,8 @@ def update_feedback(owner, repo):
 
     # grab all the reactions and update the statistics in the database.
     for prediction in predictions:
-        reactions = ghapp.get_reactions(owner=owner, 
-                                        repo=repo, 
+        reactions = ghapp.get_reactions(owner=owner,
+                                        repo=repo,
                                         comment_id=prediction.comment_id,
                                         iat=installation_access_token)
         prediction.likes = reactions['+1']

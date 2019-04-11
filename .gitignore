@@ -5,3 +5,5 @@
 !.gitignore
 !.dockerignore
 **/flask_session
+build/**
+fairing/__pycache__/**
