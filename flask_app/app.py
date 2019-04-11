@@ -141,9 +141,7 @@ def bot():
                                         probability=predictions[argmax],
                                         logs=str(predictions))
             return 'ok'
-
-    else:
-        return 'ok'
+    return 'ok'
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
