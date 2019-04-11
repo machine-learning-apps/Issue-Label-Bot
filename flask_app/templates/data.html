@@ -53,6 +53,7 @@
                 <th scope="col">Link</th>
                 <th scope="col">Prediction</th>
                 <th scope="col">Confidence</th>
+                <th scope="col">Auto Labeled?</th>
                 <th scope="col"><i class="fas fa-thumbs-up"></th>
                 <th scope="col"><i class="fas fa-thumbs-down"></i></th>
               </tr>
@@ -70,6 +71,7 @@
                 </td>
                 <td>{{ result.prediction }}</td>
                 <td>{{ result.probability|round(3, 'common') }}</td>
+                <td>{{ result.labeled }}</td>
                 <td>{{ result.likes }}</td>
                 <td>{{ result.dislikes }}</td>
             </tr>

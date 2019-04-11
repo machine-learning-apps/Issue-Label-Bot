@@ -76,7 +76,7 @@ def init():
 @app.route("/", methods=["GET"])
 def index():
     "Landing page"
-    results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id) as t ORDER BY random() LIMIT 50").fetchall()
+    results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu') as t ORDER BY random() LIMIT 50").fetchall()
     num_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
@@ -126,24 +126,37 @@ def bot():
 
         # get the most confident prediction
         argmax = max(predictions, key=predictions.get)
+
+        # get the isssue handle
+        issue = get_issue_handle(installation_id, username, repo, issue_num)
+
+
+        labeled = True
+        threshold = prediction_threshold[argmax]
         # take an action if the prediction is confident enough
-        if predictions and (predictions[argmax] >= prediction_threshold[argmax]):
+        if (predictions[argmax] >= threshold):
             # create message
             message = f'Issue-Label Bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard]({app_url}data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
-            # label the issue and make a comment using the GitHub api
-            issue = get_issue_handle(installation_id, username, repo, issue_num)
-            comment = issue.create_comment(message)
+            # label the issue using the GitHub api
             issue.add_labels(argmax)
+        
+        else:
+            message = f'Issue Label Bot is not confident enough to auto-label this issue. See [dashboard]({app_url}data/{username}/{repo}) for more details.'
+            LOG.warning(f'Not confident enough to label this issue: # {str(issue_num)}')
+            labeled = False
+        
+        # Make a comment using the GitHub api
+        comment = issue.create_comment(message)
 
-            # log the prediction to the database using ORM
-            issue_db_obj.add_prediction(comment_id=comment.id,
-                                        prediction=argmax,
-                                        probability=predictions[argmax],
-                                        logs=str(predictions))
-            return 'ok'
-
-    else:
+        # log the event to the database using ORM
+        issue_db_obj.add_prediction(comment_id=comment.id,
+                                    prediction=argmax,
+                                    probability=predictions[argmax],
+                                    logs=str(predictions),
+                                    threshold=threshold, 
+                                    labeled=labeled)
         return 'ok'
+    return 'ok'
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
