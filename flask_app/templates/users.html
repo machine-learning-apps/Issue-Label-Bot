@@ -41,14 +41,14 @@
     {% for user in users %}
     <tr>
         <th scope="row">{{ loop.index }}</th>
-        {% if user in users_with_preds %}
-            <td>{{ user }}</td>
+        {% if user['is_pred'] %}
+            <td>{{ user['name'] }}</td>
             {% else %}
-            <td><span style="color:grey">{{ user }}</span></td>
+            <td><span style="color:grey">{{ user['name'] }}</span></td>
         {% endif %}
         <td>
-            {% if user in users_with_preds %}
-                <a class="nav-link" href="{{ url_for('get_repos', username=user) }}" style="color:blue">
+            {% if user['is_pred'] %}
+                <a class="nav-link" href="{{ url_for('get_repos', username=user['name']) }}" style="color:blue">
                 {% else %}
                 <a class="nav-link" style="color:lightgray">
             {% endif %}
