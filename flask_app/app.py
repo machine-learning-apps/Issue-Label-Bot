@@ -16,6 +16,7 @@ from urllib.request import urlopen
 from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import requests
+import yaml
 
 
 app = Flask(__name__)
@@ -135,12 +136,25 @@ def bot():
 
         labeled = True
         threshold = prediction_threshold[argmax]
+
         # take an action if the prediction is confident enough
         if (predictions[argmax] >= threshold):
+            # initialize the label name to = the argmax
+            label_name = argmax
+
+            # handle the yaml file
+            yaml = get_yaml(owner=username, repo=repo)
+            if yaml and 'label-alias' in yaml:
+                if  argmax in yaml['label-alias']:
+                    LOG.warning('User has custom names: ', yaml['label-alias'])
+                    new_name = yaml['label-alias'][argmax]
+                    if new_name:
+                        label_name = new_name
+
             # create message
-            message = f'Issue-Label Bot is automatically applying the label `{argmax}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard]({app_url}data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
+            message = f'Issue-Label Bot is automatically applying the label `{label_name}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard]({app_url}data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
             # label the issue using the GitHub api
-            issue.add_labels(argmax)
+            issue.add_labels(label_name)
         
         else:
             message = f'Issue Label Bot is not confident enough to auto-label this issue. See [dashboard]({app_url}data/{username}/{repo}) for more details.'
@@ -302,6 +316,26 @@ def get_issue_handle(installation_id, username, repository, number):
     ghapp = get_app()
     install = ghapp.get_installation(installation_id)
     return install.issue(username, repository, number)
+
+def get_yaml(owner, repo):
+    """
+    Looks for the yaml file in a /.github directory.
+    
+    yaml file must be named issue_label_bot.yaml
+    """
+    ghapp = get_app()
+    try:
+        # get the app installation handle
+        inst_id = ghapp.get_installation_id(owner=owner, repo=repo)
+        inst = ghapp.get_installation(installation_id=inst_id)
+        # get the repo handle, which allows you got get the file contents
+        repo = inst.repository(owner=owner, repository=repo)
+        results = repo.file_contents('.github/issue_label_bot.yaml').decoded
+    
+    except:
+        return None
+    
+    return yaml.safe_load(results)
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
