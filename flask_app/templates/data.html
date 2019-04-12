@@ -14,16 +14,16 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('index') }}" style="color:blue">
-                    <i class="fas fa-angle-double-left"></i>
-                    Back To Main Page
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('get_repos', username=owner) }}" style="color:chocolate">
                     <i class="fas fa-arrow-alt-to-left"></i>
                     All Repos for <span style="font-weight:bold">{{ owner }}</span>
-                   
+                    
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('index') }}" style="color:blue">
+                    <i class="fas fa-angle-double-left"></i>
+                    Back To Main Page
                 </a>
             </li>
         </ul>
