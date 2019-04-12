@@ -158,13 +158,45 @@ def bot():
         return 'ok'
     return 'ok'
 
+@app.route("/repos/<string:username>", methods=["GET"])
+def get_repos(username):
+    "Get repos actively installed in."
+    ghapp = get_app()
+    app = ghapp.get_app()
+    try:
+        install_id =  app.app_installation_for_user(f'{username}').id
+    except:
+        return f'No current installations for {username} found.'
+    
+    url = f'https://api.github.com/installation/repositories'
+    headers = {'Authorization': f'token {ghapp.get_installation_access_token(install_id)}',
+               'Accept': 'application/vnd.github.machine-man-preview+json'}
+    
+    response = requests.get(url=url, headers=headers)
+    if response.status_code == 200:
+        repos = response.json()['repositories']
+        return render_template('repos.html', repos=repos, username=username)
+    
+    else:
+        return response.status_code
+        
+@app.route('/users')
+def show_users():
+    users = get_users()
+    return render_template('users.html', users=users)
+
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):
     "Route where users can see the Bot's recent predictions for a repo"
+    installed = app_installation_exists(owner=owner, repo=repo)
+    alert = None
+    if not installed:
+        alert = 'Warning: The app is no longer installed on this repo. Will not be able to update feedback, but you can still view predictions.'
 
     if not is_public(owner, repo):
         return render_template("data.html",
                                results=[],
+                               num_issues=0,
                                owner=owner,
                                repo=repo,
                                error=f'<span style="font-weight:bold">{owner}/{repo}</span> is a private repo or does not exist.')
@@ -173,7 +205,15 @@ def data(owner, repo):
     issue_numbers = [x.issue_id for x in issues]
 
     if request.method == 'POST':
-        update_feedback(owner=owner, repo=repo)
+        if installed:
+            update_feedback(owner=owner, repo=repo)
+        else:
+            return render_template("data.html",
+                               results=[],
+                               num_issues=0,
+                               owner=owner,
+                               repo=repo,
+                               error=f'App is no longer installed for <span style="font-weight:bold">{owner}/{repo}</span>. Cannot fetch feedback.')
 
     # get the 50 most recent predictions.
     predictions = (Predictions.query.filter(Predictions.issue_id.in_(issue_numbers))
@@ -189,7 +229,9 @@ def data(owner, repo):
                            num_issues=num_issues,
                            num_predictions=num_predictions,
                            owner=owner,
-                           repo=repo)
+                           repo=repo,
+                           alert=alert,
+                           installed=installed)
 
 
 def update_feedback(owner, repo):
@@ -226,6 +268,21 @@ def get_app():
     key_file_path = 'private-key.pem'
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
     return ghapp
+
+def get_users():
+    "git list of users."
+    ghapp = get_app()
+    app = ghapp.get_app()
+    return [x.account['login'] for x in list(app.app_installations())]
+
+def app_installation_exists(owner, repo):
+    "check if app is installed on the repo."
+    ghapp = get_app()
+    try:
+        ghapp.get_installation_id(owner=owner, repo=repo)
+        return True
+    except:
+        return False
 
 def get_issue_handle(installation_id, username, repository, number):
     "get an issue object."

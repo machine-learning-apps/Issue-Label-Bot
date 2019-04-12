@@ -15,8 +15,15 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('index') }}" style="color:blue">
+                    <i class="fas fa-angle-double-left"></i>
                     Back To Main Page
-                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('get_repos', username=owner) }}" style="color:chocolate">
+                    <i class="fas fa-arrow-alt-to-left"></i>
+                    All Repos for <span style="font-weight:bold">{{ owner }}</span>
+                   
                 </a>
             </li>
         </ul>
@@ -32,10 +39,12 @@
         <div class="text-center">
             {% if num_issues > 0  %}
             <h4 class="text-center">Data For {{ owner }}/{{ repo }} </h4>
-            {% if results %}
-            <p>Only showing last 50 predictions</p>
-            <button style="margin-top:10px; margin-bottom:10px; float:right" type="submit" class="btn btn-primary">Refresh ( <i class="fas fa-thumbs-up"></i>, <i class="fas fa-thumbs-down"></i>) </button>
-            {% endif %}
+                {% if results %}
+                <p>Only showing last 50 predictions</p>
+                    {% if installed %}
+                    <button style="margin-top:10px; margin-bottom:10px; float:right" type="submit" class="btn btn-primary">Refresh ( <i class="fas fa-thumbs-up"></i>, <i class="fas fa-thumbs-down"></i>) </button>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         </div>
     </form>

@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block title %}
+    Active Users
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-light">
+        <ul class="navbar-nav">
+            <li>
+                <h4>App Installations</h4>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('index') }}" style="color:blue">
+                    <i class="fas fa-angle-double-left"></i>
+                    Back To Main Page
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <a class="nav-link" href="https://github.com/hamelsmu/MLapp/" style="color:grey">
+                See App On 
+                <i class="fab fa-github"></i>
+            </a>
+        </ul>
+    </nav>
+</div>
+<br>
+<p><span style="font-weight:bold">{{ users | length }}</span> users currently have the app installed.</p>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">See Repos</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ user }}</td>
+        <td>
+            <a class="nav-link" href="{{ url_for('get_repos', username=user) }}" style="color:blue">
+                <i class="fas fa-arrow-from-left"></i>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}  
+    </tbody>
+</table>
+{% endblock %}

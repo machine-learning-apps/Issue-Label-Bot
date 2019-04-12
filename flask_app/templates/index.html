@@ -39,7 +39,6 @@
             <div class="card bg-light mb-3 h-100" style="width: 100%">
                 <div class="card-body align-items-center">
                     <h3 class="card-title"><i class="fas fa-database"></i> View Predictions</h3>
-                    <p class="card-text" style=>Once installed, a summary of your last 50 predictions can be viewed at: <span style="color:rgb(160, 106, 19)">https://mlbot.net/data/{owner}/{repo}</span></p>  
                     <p class="card-text">See example predictions from random repos from the drop down menu below:</p>
                     {% if results %}
                     <div class="dropdown text-center">
@@ -59,4 +58,12 @@
             </div>
         </div>
     </div>
+    <br>
+    <p class="card-text" style=>See all users with active installations: <a href="https://mlbot.net/users\">https://mlbot.net/users</a></p>
+    <br> 
+    <h5>Additional Routes For Existing Users:</h5>
+    <br>
+    <p class="card-text" style=>See all repos w/installations for a specific user: <span style="color:chocolate">https://mlbot.net/repos/{username}</span></p> 
+    <p class="card-text" style=>See your last 50 predictions: <span style="color:chocolate">https://mlbot.net/data/{username}/{repo}</span></p>  
+
 {% endblock %}
