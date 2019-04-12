@@ -175,7 +175,8 @@ def get_repos(username):
     response = requests.get(url=url, headers=headers)
     if response.status_code == 200:
         repos = response.json()['repositories']
-        return render_template('repos.html', repos=repos, username=username)
+        repos_with_preds = [x.repo for x in Issues.query.filter(Issues.username == username and Issues.predictions != None).distinct(Issues.repo).all()]
+        return render_template('repos.html', repos=repos, username=username, repos_with_preds=repos_with_preds)
     
     else:
         return response.status_code
@@ -183,7 +184,8 @@ def get_repos(username):
 @app.route('/users')
 def show_users():
     users = get_users()
-    return render_template('users.html', users=users)
+    users_with_preds = [x.username for x in Issues.query.filter(Issues.predictions != None).distinct(Issues.username).all()]
+    return render_template('users.html', users=users, users_with_preds=users_with_preds)
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
 def data(owner, repo):

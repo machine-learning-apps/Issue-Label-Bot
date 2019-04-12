@@ -52,7 +52,11 @@
     {% for repo in repos %}
     <tr>
         <th scope="row">{{ loop.index }}</th>
-        <td>{{ repo['full_name'] }}</td>
+        {% if repo in repo_with_preds %}
+            <td>{{ repo['full_name'] }}</td>
+            {% else %}
+            <td><span style="color:grey">{{ repo['full_name'] }}</span></td>
+        {% endif %}
         <td>{{ repo['stargazers_count'] }}</td>
         <td>{{ repo['updated_at'] | truncate(13) }}</td>
         <td>
@@ -61,9 +65,12 @@
             </a>
         </td>
         <td>
-            <a class="nav-link" href="{{ url_for('data', owner=repo['owner']['login'], repo=repo['name']) }}" style="color:blue">
-                <i class="fas fa-arrow-from-left"></i>
-            </a>
+            {% if repo in repo_with_preds %}
+                <a class="nav-link" href="{{ url_for('data', owner=repo['owner']['login'], repo=repo['name']) }}" style="color:blue">
+                {% else %}
+                <a class="nav-link" style="color:lightgray">
+            {% endif %}
+                <i class="fas fa-arrow-from-left"></i></a>
         </td>
     </tr>
     {% endfor %}  

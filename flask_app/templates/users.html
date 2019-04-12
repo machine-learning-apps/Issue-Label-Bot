@@ -41,11 +41,18 @@
     {% for user in users %}
     <tr>
         <th scope="row">{{ loop.index }}</th>
-        <td>{{ user }}</td>
+        {% if user in user_with_preds %}
+            <td>{{ user }}</td>
+            {% else %}
+            <td><span style="color:grey">{{ user }}</span></td>
+        {% endif %}
         <td>
-            <a class="nav-link" href="{{ url_for('get_repos', username=user) }}" style="color:blue">
-                <i class="fas fa-arrow-from-left"></i>
-            </a>
+            {% if user in user_with_preds %}
+                <a class="nav-link" href="{{ url_for('get_repos', username=user) }}" style="color:blue">
+                {% else %}
+                <a class="nav-link" style="color:lightgray">
+                <i class="fas fa-arrow-from-left"></i></a>
+            {% endif %}
         </td>
     </tr>
     {% endfor %}  
