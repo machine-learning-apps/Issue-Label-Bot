@@ -34,7 +34,7 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Username</th>
-        <th scope="col">See Repos</th>
+        <th scope="col">See Repos <span style="color:grey">(Grey if no activity yet)</span></th>
       </tr>
     </thead>
     <tbody>
@@ -44,13 +44,13 @@
         {% if user['is_pred'] %}
             <td>{{ user['name'] }}</td>
             {% else %}
-            <td><span style="color:grey">{{ user['name'] }}</span></td>
+            <td><span style="color:lightgray">{{ user['name'] }}</span></td>
         {% endif %}
         <td>
             {% if user['is_pred'] %}
                 <a class="nav-link" href="{{ url_for('get_repos', username=user['name']) }}" style="color:blue">
                 {% else %}
-                <a class="nav-link" style="color:lightgray">
+                <a class="nav-link" href="{{ url_for('get_repos', username=user['name']) }}" style="color:lightgray">
             {% endif %}
             <i class="fas fa-arrow-from-left"></i></a>
         </td>

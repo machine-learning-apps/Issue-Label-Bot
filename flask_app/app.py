@@ -16,7 +16,7 @@ from urllib.request import urlopen
 from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import requests
-import ipdb
+
 
 app = Flask(__name__)
 app_url = os.getenv('APP_URL')
@@ -76,13 +76,15 @@ def init():
 @app.route("/", methods=["GET"])
 def index():
     "Landing page"
+    num_users = len(get_users())
     results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu') as t ORDER BY random() LIMIT 50").fetchall()
-    num_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
+    num_active_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
     return render_template("index.html",
                            results=results,
                            num_users=num_users,
+                           num_active_users=num_active_users,
                            num_repos=num_repos,
                            num_predictions=num_predictions)
 
