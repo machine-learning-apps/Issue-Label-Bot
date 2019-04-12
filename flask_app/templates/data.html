@@ -48,8 +48,8 @@
             {% endif %}
         </div>
     </form>
-    {% if not results and num_issues > 0 %}
-    <p style="color:indianred">Issue Label Bot has observed <span style="font-weight:bold">{{ num_issues }} issue(s)</span> that have been opened since you installed the app.  However, it has not been confident enough to label any of them! <span style="color:black">Issue Label Bot will only make a prediction when it is sufficiently confident that the issue is either a feature request, bug, or question.</span></p>
+    {% if not results and is_public %}
+    <p style="color:indianred">Issue Label Bot has not observed any issues for <span style="font-weight:bold">{{ owner }}/{{ repo }}</span> since the app was installed.</p>
     {% endif %} 
     {% if results %}
         <br>

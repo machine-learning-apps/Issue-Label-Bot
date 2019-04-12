@@ -199,6 +199,7 @@ def data(owner, repo):
                                num_issues=0,
                                owner=owner,
                                repo=repo,
+                               is_public=False,
                                error=f'<span style="font-weight:bold">{owner}/{repo}</span> is a private repo or does not exist.')
 
     issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
@@ -213,6 +214,7 @@ def data(owner, repo):
                                num_issues=0,
                                owner=owner,
                                repo=repo,
+                               is_public=True,
                                error=f'App is no longer installed for <span style="font-weight:bold">{owner}/{repo}</span>. Cannot fetch feedback.')
 
     # get the 50 most recent predictions.
@@ -231,6 +233,7 @@ def data(owner, repo):
                            owner=owner,
                            repo=repo,
                            alert=alert,
+                           is_public=True,
                            installed=installed)
 
 
