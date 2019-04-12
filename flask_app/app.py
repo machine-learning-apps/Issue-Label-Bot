@@ -185,6 +185,9 @@ def get_repos(username):
 def show_users():
     users = get_users()
     users_with_preds = [x.username for x in Issues.query.filter(Issues.predictions != None).distinct(Issues.username).all()]
+
+    users = [{'name':a, 'is_pred':b} for a,b in sorted([(x, x in users_with_preds) for x in users], key=lambda x: ~x[1])]
+
     return render_template('users.html', users=users, users_with_preds=users_with_preds)
 
 @app.route("/data/<string:owner>/<string:repo>", methods=["GET", "POST"])
