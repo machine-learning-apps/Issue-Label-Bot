@@ -260,12 +260,15 @@ def update_feedback(owner, repo):
 
     # grab all the reactions and update the statistics in the database.
     for prediction in predictions:
-        reactions = ghapp.get_reactions(owner=owner,
-                                        repo=repo,
-                                        comment_id=prediction.comment_id,
-                                        iat=installation_access_token)
-        prediction.likes = reactions['+1']
-        prediction.dislikes = reactions['-1']
+        try:
+            reactions = ghapp.get_reactions(owner=owner,
+                                            repo=repo,
+                                            comment_id=prediction.comment_id,
+                                            iat=installation_access_token)
+            prediction.likes = reactions['+1']
+            prediction.dislikes = reactions['-1']
+        except:
+            continue
     db.session.commit()
     print(f'Successfully updated feedback based on reactions for {len(predictions)} predictions in {owner}/{repo}.')
 
