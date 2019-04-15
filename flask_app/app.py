@@ -73,7 +73,16 @@ def init():
     app.graph = tf.get_default_graph()
     app.issue_labeler = init_issue_labeler()
 
-# smee by default sends things to /event_handler route
+# this redirects http to https
+# from https://stackoverflow.com/a/53501072/1518630
+# @app.before_request
+# def before_request():
+#     if not request.is_secure and app.env != "development":
+#         url = request.url.replace("http://", "https://", 1)
+#         code = 301
+#         return redirect(url, code=code)
+
+# Webpage for app
 @app.route("/", methods=["GET"])
 def index():
     "Landing page"
