@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# because supplying my .env file to docker run doesn't seem to work.
+
+docker run -e FLASK_ENV=$FLASK_ENV \
+-e PORT=$PORT -e DATABASE_URL=$DATABASE_URL \
+-e PRIVATE_KEY=$PRIVATE_KEY \
+-e WEBHOOK_SECRET=$WEBHOOK_SECRET \
+-e APP_ID=$APP_ID \
+-e APP_URL=$APP_URL \
+-p 3000:$PORT hamelsmu/mlapp
+

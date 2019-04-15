@@ -264,6 +264,10 @@ def data(owner, repo):
                            is_public=True,
                            installed=installed)
 
+@app.route("/health_check", methods=["GET"])
+def health_check():
+    "route for load balancer."
+    return jsonify({'success':True}), 200, {'ContentType':'application/json'}
 
 def update_feedback(owner, repo):
     "Update feedback for predicted labels for an owner/repo"
