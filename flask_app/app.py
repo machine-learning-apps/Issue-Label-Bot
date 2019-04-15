@@ -86,14 +86,12 @@ def init():
 @app.route("/", methods=["GET"])
 def index():
     "Landing page"
-    num_users = len(get_users())
     results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu' LIMIT 200) as t ORDER BY random() LIMIT 25").fetchall()
     num_active_users = f'{db.engine.execute("SELECT count(distinct username) FROM issues").fetchall()[0][0]:,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
     return render_template("index.html",
                            results=results,
-                           num_users=num_users,
                            num_active_users=num_active_users,
                            num_repos=num_repos,
                            num_predictions=num_predictions)
