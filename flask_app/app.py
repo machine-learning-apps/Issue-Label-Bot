@@ -87,7 +87,7 @@ def init():
 def index():
     "Landing page"
     num_users = len(get_users())
-    results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu') as t ORDER BY random() LIMIT 50").fetchall()
+    results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu' LIMIT 200) as t ORDER BY random() LIMIT 25").fetchall()
     num_active_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
@@ -197,7 +197,7 @@ def get_repos(username):
     headers = {'Authorization': f'token {ghapp.get_installation_access_token(install_id)}',
                'Accept': 'application/vnd.github.machine-man-preview+json'}
     
-    response = requests.get(url=url, headers=headers)
+    response = requests.get(url=url, headers=headers, params={'per_page':100})
     if response.status_code == 200:
         repos = response.json()['repositories']
         repos_with_preds = [x.repo for x in Issues.query.filter(Issues.username == username and Issues.predictions != None).distinct(Issues.repo).all()]
