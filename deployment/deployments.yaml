@@ -6,7 +6,7 @@ metadata:
   labels:
     app: ml-github-app
 spec:
-  replicas: 3
+  replicas: 9
   selector:
     matchLabels:
       app: ml-github-app
@@ -55,7 +55,7 @@ spec:
         - name: APP_URL_HEROKU
           value: https://fathomless-forest-27162.herokuapp.com/
         - name: authors
-          value: e
+          value: 'b'
         ports:
         - containerPort: 443
         - containerPort: 80
