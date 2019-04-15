@@ -88,7 +88,7 @@ def index():
     "Landing page"
     num_users = len(get_users())
     results = db.engine.execute("SELECT * FROM (SELECT distinct repo, username FROM issues a JOIN predictions b on a.issue_id=b.issue_id WHERE username != 'hamelsmu' LIMIT 200) as t ORDER BY random() LIMIT 25").fetchall()
-    num_active_users = f'{len(db.engine.execute("SELECT distinct username FROM issues").fetchall()):,}'
+    num_active_users = f'{db.engine.execute("SELECT count(distinct username) FROM issues").fetchall()[0][0]:,}'
     num_predictions = f'{db.engine.execute("SELECT count(*) FROM predictions").fetchall()[0][0]:,}'
     num_repos = f'{len(results):,}'
     return render_template("index.html",
