@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mlbot-net
+  namespace: mlapp
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: mlbot-net
+spec:
+  backend:
+    serviceName: ml-github-app
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ml-github-app
+          servicePort: 3000
+  tls:
+    - hosts:
+      - mlbot.net
+      secretName: mlapp-tls
