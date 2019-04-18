@@ -159,7 +159,7 @@ def bot():
                         label_name = new_name
 
             # create message
-            message = f'Issue-Label Bot is automatically applying the label `{label_name}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [dashboard]({app_url}data/{username}/{repo}), [app homepage](https://github.com/apps/issue-label-bot) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
+            message = f'Issue-Label Bot is automatically applying the label `{label_name}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [app homepage](https://github.com/marketplace/issue-label-bot), [dashboard]({app_url}data/{username}/{repo}) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
             # label the issue using the GitHub api
             issue.add_labels(label_name)
         
