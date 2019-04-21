@@ -1,5 +1,5 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![License: MIT](https://img.shields.io/badge/License-MIT-darkgreen.svg)](https://opensource.org/licenses/MIT)
-[![Install App](https://img.shields.io/badge/GitHub%20Marketplace-Install%20App-blueviolet.svg)](https://github.com/marketplace/issue-label-bot)
+[![Install App](https://img.shields.io/badge/GitHub%20Marketplace-Install%20App-blueviolet.svg?logo=github)](https://github.com/marketplace/issue-label-bot)
 
 
 
@@ -30,13 +30,15 @@ Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://gith
 
 # Issue Label Bot
 
-**Install this app from [the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
+**Install this app [from the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
 
 A GitHub App powered by machine learning, written in python.  A discussion of the motivation for building this app is described in this [blog post][blog].  
 
 When an issue is opened, the bot predicts if the label should be a: `feature request`, `bug` or `question` and applies a label automatically if appropriate. Here is a screenshot of the bot in action:
 
-![alt text](images/example3_big.png)
+> ![alt text](images/example3_big.png)
+
+
 
 More examples can be viewed on our [app's homepage](https://mlbot.net/).  It should be noted that the bot may not apply any label in circumstances where the prediction is uncertain.  See the [disclaimers](#Disclaimers) section for more caveats.
 
