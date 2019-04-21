@@ -1,4 +1,5 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![License: MIT](https://img.shields.io/badge/License-MIT-darkgreen.svg)](https://opensource.org/licenses/MIT)
+[![Install App](https://img.shields.io/badge/GitHub%20Marketplace-Install%20App-blueviolet.svg)](https://github.com/marketplace/issue-label-bot)
 
 
 
@@ -27,7 +28,7 @@ Table of Contents
 Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0), [@jlewi](https://github.com/jlewi)
 
 
-# [Issue Label Bot](https://github.com/marketplace/issue-label-bot)
+# Issue Label Bot
 
 **Install this app from [the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
 
