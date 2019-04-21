@@ -27,7 +27,9 @@ Table of Contents
 Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0), [@jlewi](https://github.com/jlewi)
 
 
-# Issue-Label Bot
+# [Issue Label Bot](https://github.com/marketplace/issue-label-bot)
+
+**Install this app from [the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
 
 A GitHub App powered by machine learning, written in python.  A discussion of the motivation for building this app is described in this [blog post][blog].  
 
