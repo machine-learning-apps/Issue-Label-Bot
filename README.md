@@ -125,7 +125,7 @@ The authors of this project are interested in adding the following features in t
 - Constructing better labels and negative samples of items that do not belong in the label set to drive further improvements.
 - Using the tools from [fastai](https://docs.fast.ai/) to explore:
     - State of the art architectures, such as [Multi-Head Attention](https://docs.fast.ai/text.models.html#MultiHeadAttention)
-    - Utilizing transfer learning to predict unique labels and/or enhance accuracy in the dataset. 
+    - Utilizing transfer learning to predict unique labels and/or enhance accuracy. 
 - Using [GitHub Actions](https://github.com/features/actions) to trigger automated deploys of this code.
 - Model pipeline orchestration on [Argo pipelines](https://argoproj.github.io/).
 
