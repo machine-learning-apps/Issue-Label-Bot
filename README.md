@@ -45,7 +45,7 @@ More examples can be viewed on our [app's homepage](https://mlbot.net/).  It sho
 ## Important links
 
 - [Issue Label Bot homepage](https://mlbot.net). Provides a way to view example predictions as well as other information regarding this bot.
- - GitHub [App page](https://github.com/apps/issue-label-bot) for Issue Label Bot, where you can install the app. See [disclaimers](#Disclaimers) below before installing.
+ - GitHub [App page](https://github.com/marketplace/issue-label-bot) for Issue Label Bot, where you can install the app. See [disclaimers](#Disclaimers) below before installing.
  
  
 ## Files
