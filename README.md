@@ -35,7 +35,7 @@ A GitHub App powered by machine learning, written in python.  A discussion of th
 
 When an issue is opened, the bot predicts if the label should be a: `feature request`, `bug` or `question` and applies a label automatically if appropriate. Here is a screenshot of the bot in action:
 
-> ![alt text](images/example3_big.png)
+> ![alt text](images/example4_big.png)
 
 
 
