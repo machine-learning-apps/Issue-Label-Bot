@@ -6,7 +6,7 @@
 
 [blog]: https://medium.com/@hamelhusain/mlapp-419f90e8f007?source=friends_link&sk=760e18a2d6e60999d7eb2887352a92a8
 
-### Code for: ["How to automate tasks on GitHub with machine learning for fun and profit"][blog]
+##### Code for: ["How to automate tasks on GitHub with machine learning for fun and profit"][blog]
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 Table of Contents
@@ -27,8 +27,7 @@ Table of Contents
 
 Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://github.com/inc0), [@jlewi](https://github.com/jlewi)
 
-
-# Issue Label Bot
+ <h1><img src="https://github.com/machine-learning-apps/MLapp/blob/master/images/Issue-Label-Bot7.png" width="100" height="100">Issue Label Bot</h1>
 
 **Install this app [from the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
 
