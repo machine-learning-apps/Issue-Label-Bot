@@ -49,4 +49,6 @@ spec:
       resources:
         requests:
           nvidia.com/gpu: 1 # requesting 1 GPU
+        limits:
+          nvidia.com/gpu: 1
       command: ["python", "/src/train.py"]
