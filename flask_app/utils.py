@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from sklearn import svm, datasets
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_recall_curve
 from sklearn.utils.multiclass import unique_labels
 
 
@@ -120,3 +120,36 @@ class IssueLabeler:
         probs = self.model.predict(x=[vec_body, vec_title]).tolist()[0]
         
         return {k:v for k,v in zip(self.class_names, probs)}
+
+
+def plot_precision_recall_vs_threshold(y, y_hat, class_names, precision_threshold):
+    "plot precision recall curves focused on precision."
+    # credit: https://github.com/ageron/handson-ml/blob/master/03_classification.ipynb
+    assert len(class_names)-1 <= y_hat.shape[-1], 'number of class names must equal number of classes in the data'
+    assert y.shape == y_hat.shape, 'shape of ground_truth and predictions must be the same.'
+    
+    for class_name in class_names:
+        class_int = class_names.index(class_name)
+        precisions, recalls, thresholds = precision_recall_curve(y[:, class_int], y_hat[:, class_int])
+        
+        # get the first index of the precision that meets the threshold
+        precision_idx = np.argmax(precisions >= precision_threshold)
+        # find the exact probability at that threshold
+        prob_thresh = thresholds[precision_idx]
+        # find the exact recall at that threshold
+        recall_at_thresh = recalls[precision_idx]
+        
+        plt.figure(figsize=(8, 4))
+        plt.plot(thresholds, precisions[:-1], "b--", label="Precision", linewidth=2)
+        plt.plot(thresholds, recalls[:-1], "g-", label="Recall", linewidth=2)
+        plt.axhline(y=precision_threshold, label=f'{precision_threshold:.2f}', linewidth=1)
+        plt.xlabel("Threshold", fontsize=11)
+        plt.legend(loc="lower left", fontsize=10)
+        plt.title(f'Precision vs. Recall For Label: {class_name}')
+        plt.ylim([0, 1])
+        plt.xlim([0, 1])
+        plt.show()
+        print(f'Label "{class_name}" @ {precision_threshold:.2f} precision:')
+        print(f'  Cutoff: {prob_thresh:.2f}')
+        print(f'  Recall: {recall_at_thresh:.2f}')
+        print('\n')
