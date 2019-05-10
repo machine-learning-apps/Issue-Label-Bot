@@ -18,7 +18,6 @@ import tensorflow as tf
 import requests
 import yaml
 
-
 app = Flask(__name__)
 app_url = os.getenv('APP_URL')
 
@@ -272,7 +271,7 @@ def health_check():
 def update_feedback(owner, repo):
     "Update feedback for predicted labels for an owner/repo"
     # authenticate webhook to make sure it is from GitHub
-    issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).all()
+    issues = Issues.query.filter(Issues.username == owner, Issues.repo == repo).order_by(Issues.issue_num.desc()).limit(50).all()
     issue_numbers = [x.issue_id for x in issues]
 
     # only update last 100 things to prevent edge cases on repos with large number of issues.
