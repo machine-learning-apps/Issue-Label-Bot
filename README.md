@@ -31,7 +31,7 @@ Original Authors: [@hamelsmu](https://github.com/hamelsmu), [@inc0](https://gith
 
 **Install this app [from the GitHub marketplace](https://github.com/marketplace/issue-label-bot)**
 
-A GitHub App powered by machine learning, written in python.  A discussion of the motivation for building this app is described in this [blog post][blog].  
+A GitHub App powered by machine learning, written in Python.  A discussion of the motivation for building this app is described in this [blog post][blog].  
 
 When an issue is opened, the bot predicts if the label should be a: `feature request`, `bug` or `question` and applies a label automatically if appropriate. Here is a screenshot of the bot in action:
 
@@ -50,7 +50,7 @@ More examples can be viewed on our [app's homepage](https://mlbot.net/).  It sho
  
 ## Files
  
- - [/notebooks](/notebooks): contains notebooks on how to train the model and interact with the GitHub api uing a python client.
+ - [/notebooks](/notebooks): contains notebooks on how to train the model and interact with the GitHub API using a Python client.
  - [/flask_app](/flask_app): code for a flask app that listens for [GitHub issue events](https://developer.github.com/v3/issues/events/) and responds with predictions.  This is the main application that the user will interact with.
 - [/argo](/argo): the code in this directory relates to the construction of [Argo ML Pipelines](https://argoproj.github.io/) for training and deploying ML workflows. 
 - [/deployment](/deployment): This directory contains files that are helpful in deploying the app.
@@ -64,11 +64,11 @@ More examples can be viewed on our [app's homepage](https://mlbot.net/).  It sho
 
 To utilize the code in this repository, you will need to register a GitHub App of your own and install this app on your desired repositories and store authentication secrets.  
 
-First, walk through the [prerequisites section of this getting started guide](https://developer.github.com/apps/quickstart-guides/using-the-github-api-in-your-app/#prerequisites) **except** The Ruby programming language" section as we will be using python instead as the client that interfaces with the GitHub api.  
+First, walk through the [prerequisites section of this getting started guide](https://developer.github.com/apps/quickstart-guides/using-the-github-api-in-your-app/#prerequisites) **except** "The Ruby programming language" section as we will be using Python instead as the client that interfaces with the GitHub API.  
 
  Second, [setup your development environment](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment/). Make sure you create a Webhook secret, even though this step is optional.
 
- Next, setup a postgres database.  You can do this [for free on Heroku](https://elements.heroku.com/addons/heroku-postgresql).    Detailed instructions (stolen shamelessly from [here](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript)):
+ Next, set up a Postgres database.  You can do this [for free on Heroku](https://elements.heroku.com/addons/heroku-postgresql).    Detailed instructions (stolen shamelessly from [here](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript)):
 
 1. Navigate to https://www.heroku.com/, and create an account if you don’t already have one.
 2. On Heroku’s Dashboard, click “New” and choose “Create new app.”
@@ -83,7 +83,7 @@ Finally, you need to create environment variables for all the secrets, which is 
 
 ## Environment Variables
 
-1. `PRIVATE_KEY`:  this is the private key you use to [authenticate as an app](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment) with the GitHub api.
+1. `PRIVATE_KEY`:  this is the private key you use to [authenticate as an app](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment) with the GitHub API.
 2. `WEBHOOK_SECRET`: this is used to verify that payloads received by your app are actually from GitHub.  This is described [here](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment/).
 2. `DATABASE_URL`: this is the URL that contains the login information for your POSTGRESQL database, usually in the form: `postgres://<username>:<password>@<url>:5432/<database_name>`
 3. `APP_ID`: this is a unique identifier provided to you by GitHub when you [register your app](https://developer.github.com/apps/quickstart-guides/setting-up-your-development-environment).
