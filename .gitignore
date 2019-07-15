@@ -2,6 +2,8 @@
 *.pem
 *.hdf5
 *.pkl
+*.pth
+*.csv
 !.gitignore
 !.dockerignore
 **/flask_session
