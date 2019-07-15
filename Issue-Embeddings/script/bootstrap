@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -e
-cd $(dirname "$0")/..
-
-docker build -t hamelsmu/issuefeatures-api-cpu -f deployment/Dockerfile .
-docker push hamelsmu/issuefeatures-api-cpu

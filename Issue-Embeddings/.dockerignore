@@ -1,6 +1,0 @@
-.*
-*.pem
-*.hdf5
-**/*.pem
-*.pkl
-**/flask_session
