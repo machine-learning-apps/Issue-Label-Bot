@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-github-issuefeat
+  namespace: issuefeat
+  labels:
+    app: ml-github-issuefeat
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: ml-github-issuefeat
+  template:
+    metadata:
+      labels:
+        app: ml-github-issuefeat
+    spec:
+      containers:
+      - name: ml-github-issuefeat
+        image: hamelsmu/issuefeatures-api-cpu
+        command: ["python", "app.py"]
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ml-github-issuefeat-secret
+              key: TOKEN
+        - name: APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: ml-github-issuefeat-secret
+              key: APP_ID
+        - name: FLASK_ENV
+          value: production
+        - name: PORT
+          value: '3000'
+        - name: authors
+          value: 'f'
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 3000

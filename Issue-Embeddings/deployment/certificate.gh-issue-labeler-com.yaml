@@ -1,0 +1,19 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: gh-issue-labeler-net
+  namespace: issuefeat
+spec:
+  acme:
+    config:
+    - domains:
+      - gh-issue-labeler.net
+      http01:
+        ingress: gh-issue-labeler-net
+  commonName: gh-issue-labeler.net
+  dnsNames:
+  - gh-issue-labeler.net
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: issuefeat-tls

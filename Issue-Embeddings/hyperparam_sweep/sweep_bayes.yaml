@@ -1,0 +1,42 @@
+description: test sweep
+
+# Training script to run 907jpbre
+program: lm_tune.py
+
+# Method can be bayes, random, grid
+method: bayes
+
+# Metric to optimize
+metric:
+  name: val_loss
+  goal: minimize
+
+# # Should we early terminate runs
+early_terminate:
+  type: envelope
+
+# Parameters to search over
+parameters:
+  n_layers:
+    min: 3
+    max: 6
+  n_hid:
+    min: 1150
+    max: 5000
+  emb_sz:
+    min: 400
+    max: 1200
+  bptt:
+    min: 40
+    max: 70
+  bs:
+    min: 64
+    max: 128
+  wd:
+    min: .01
+    max: .05
+  lr:
+    min: .001
+    max: .05
+  one_cycle:
+    values: [True, False]
