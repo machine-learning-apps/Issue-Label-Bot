@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ml-gh-issuefeat
+  namespace: issuefeat
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: gh-issue-labeler
+spec:
+  backend:
+    serviceName: ml-github-issuefeat
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ml-github-issuefeat
+          servicePort: 3000
+  tls:
+    - hosts:
+      - gh-issue-labeler.com
+      secretName: predict-issuefeat-tls
