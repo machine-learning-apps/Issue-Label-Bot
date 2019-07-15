@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-github-issuefeat
+  namespace: issuefeat
+  labels:
+    app: ml-github-issuefeat
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+  selector:
+    app: ml-github-issuefeat
+  type: NodePort
