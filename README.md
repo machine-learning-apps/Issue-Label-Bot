@@ -1,6 +1,10 @@
-# Demonstrating Kubeflow With ML-Powered Developer Tools
+# Code Intelligence: ML-Powered Developer Tools
+Made with [Kubeflow](https://www.kubeflow.org/)
 
-**Motivation**: One of the promises of machine learning is to automate mundane tasks and augment our capabilities, making us all more productive.  However, one domain that doesn’t get much attention that is ripe for more automation is the domain of software development itself.  This repository contains projects that are **live machine learning-powered devloper tools, usually in the form of GitHub apps, plugins or APIs.**  We build these tools with the help of Kubeflow, in order to dog-food these products but also to surface real-world examples of end-to-end machine learning applications built with Kubeflow.
+### **Motivation:**
+One of the promises of machine learning is to automate mundane tasks and augment our capabilities, making us all more productive.  However, one domain that doesn’t get much attention that is ripe for more automation is the domain of software development itself.  This repository contains projects that are **live machine learning-powered devloper tools, usually in the form of GitHub apps, plugins or APIs.**  
+
+We build these tools with the help of Kubeflow, in order to dog-food tools that Kubeflow developers themselves will benefit from, but also to surface real-world examples of end-to-end machine learning applications built with Kubeflow.
 
 # Projects
 
