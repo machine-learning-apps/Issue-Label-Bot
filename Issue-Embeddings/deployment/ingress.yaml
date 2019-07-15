@@ -4,7 +4,8 @@ metadata:
   name: ml-gh-issuefeat
   namespace: issuefeat
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: gh-issue-labeler
+    kubernetes.io/ingress.global-static-ip-name: issuefeat-api
+    networking.gke.io/managed-certificates: gh-issue-labeler-certificate-2
 spec:
   backend:
     serviceName: ml-github-issuefeat
