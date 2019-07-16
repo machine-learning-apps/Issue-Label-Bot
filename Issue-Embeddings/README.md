@@ -12,7 +12,7 @@ The manifest files in [/deployment](/deployment) define a service that will retu
 
 All routes expect `POST` requests with a header containing a `Token` field. Below is  a list of endpoints:
 
-1. `https://gh-issue-labeler.com/text`:  expects a json payload of `title` and `body` and returns a single 2,400 dimensional vector that represents latent features of the text. For example, this is how you would interact with this endpoint from python:
+1. `https://embeddings.gh-issue-labeler.com/text`:  expects a json payload of `title` and `body` and returns a single 2,400 dimensional vector that represents latent features of the text. For example, this is how you would interact with this endpoint from python:
 
     ```python
     import requests
@@ -20,7 +20,7 @@ All routes expect `POST` requests with a header containing a `Token` field. Belo
     import numpy as np
     from passlib.apps import custom_app_context as pwd_context
 
-    API_ENDPOINT = 'https://gh-issue-labeler.com/text'
+    API_ENDPOINT = 'https://embeddings.gh-issue-labeler.com/text'
     API_KEY = 'YOUR_API_KEY' # Contact maintainers to get this
 
     # A toy example of a GitHub Issue title and body
