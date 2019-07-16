@@ -19,5 +19,5 @@ spec:
           servicePort: 3000
   tls:
     - hosts:
-      - gh-issue-labeler.com
+      - embeddings.gh-issue-labeler.com
       secretName: predict-issuefeat-tls

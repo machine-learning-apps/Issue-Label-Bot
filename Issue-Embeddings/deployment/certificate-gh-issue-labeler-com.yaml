@@ -5,4 +5,4 @@ metadata:
   namespace: issuefeat
 spec:
   domains:
-    - gh-issue-labeler.com
+    - embeddings.gh-issue-labeler.com
