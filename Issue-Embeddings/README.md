@@ -38,7 +38,7 @@ All routes expect `POST` requests with a header containing a `Token` field. Belo
 
 
 
-2. `https://gh-issue-labeler.com//all_issues/<owner>/<repo>` :construction: this will return a numpy array of the shape (# of labeled issues in repo, 2400), as well a list of all the labels for each issue.  This endpoint is still under construction.
+2. `https://embeddings.gh-issue-labeler.com//all_issues/<owner>/<repo>` :construction: this will return a numpy array of the shape (# of labeled issues in repo, 2400), as well a list of all the labels for each issue.  This endpoint is still under construction.
 
 # Training the Language Model
 
