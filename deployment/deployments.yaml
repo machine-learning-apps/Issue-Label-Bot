@@ -55,7 +55,7 @@ spec:
         - name: APP_URL_HEROKU
           value: https://fathomless-forest-27162.herokuapp.com/
         - name: authors
-          value: 'b'
+          value: 'c'
         ports:
         - containerPort: 443
         - containerPort: 80

@@ -5,6 +5,7 @@ metadata:
   namespace: mlapp
   annotations:
     kubernetes.io/ingress.global-static-ip-name: mlbot
+    networking.gke.io/managed-certificates: mlbot-net-2
 spec:
   backend:
     serviceName: ml-github-app
@@ -16,7 +17,8 @@ spec:
         backend:
           serviceName: ml-github-app
           servicePort: 3000
-  tls:
-    - hosts:
-      - predict.mlbot.net
-      secretName: predict-mlapp-tls
+  # tls:
+  #   - hosts:
+  #     - predict.mlbot.net
+  #     - mlbot.net
+  #     secretName: predict-mlapp-tls
