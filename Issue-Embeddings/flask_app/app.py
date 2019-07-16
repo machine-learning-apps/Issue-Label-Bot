@@ -41,6 +41,11 @@ def healthz():
     return jsonify({'success':True}), 200, {'ContentType':'application/json'}
 
 
+@app.route("/", methods=["GET"])
+def index():
+    "Landing page"
+    return render_template("index.html")
+
 # smee by default sends things to /event_handler route
 @app.route("/text", methods=["POST"])
 def text():

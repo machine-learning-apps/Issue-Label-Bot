@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+</html>
+    <head>
+        <style>
+            h1, p { color: #000000; 
+                text-align: center;
+                font-family:Arial, Helvetica, sans-serif;
+                }
+            .center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+                }
+        </style>
+    </head>
+    <body bgcolor="#ffffff">
+        <h1 >GitHub Issue Embeddings API</h1>
+        <br>
+        <p>Get Embeddings From Raw Text</p>
+        <iframe
+        src="https://carbon.now.sh/embed/?bg=rgba(255%2C255%2C255%2C1)&t=one-dark&wt=none&l=python&ds=true&dsyoff=3px&dsblur=10px&wc=true&wa=true&pv=29px&ph=39px&ln=true&fm=Hack&fs=14px&lh=133%25&si=false&es=2x&wm=false&code=import%2520requests%250Aimport%2520json%250Aimport%2520numpy%2520as%2520np%250Afrom%2520passlib.apps%2520import%2520custom_app_context%2520as%2520pwd_context%250A%250AAPI_ENDPOINT%2520%253D%2520'https%253A%252F%252Fembeddings.gh-issue-labeler.com%252Ftext'%250AAPI_KEY%2520%253D%2520'YOUR_API_KEY'%2520%2523%2520Contact%2520maintainers%2520to%2520get%2520this%250A%250A%2523%2520A%2520toy%2520example%2520of%2520a%2520GitHub%2520Issue%2520title%2520and%2520body%250Adata%2520%253D%2520%257B'title'%253A%2520'Fix%2520the%2520issue'%252C%2520%250A%2520%2520%2520%2520%2520%2520%2520%2520'body'%253A%2520'I%2520am%2520encountering%2520an%2520error%255Cn%2520when%2520trying%2520to%2520push%2520the%2520button.'%257D%250A%250A%2523%2520sending%2520post%2520request%2520and%2520saving%2520response%2520as%2520response%2520object%2520%250Ar%2520%253D%2520requests.post(url%253DAPI_ENDPOINT%252C%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520headers%253D%257B'Token'%253Apwd_context.hash(API_KEY)%257D%252C%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520json%253Ddata)%250A%250A%2523%2520convert%2520string%2520back%2520into%2520a%2520numpy%2520array%250Aembeddings%2520%253D%2520np.frombuffer(r.content%252C%2520dtype%253D'%253Cf4')"
+        style="transform:scale(1.0); width:1228px; height:566px; border:0; overflow:hidden;"
+        sandbox="allow-scripts allow-same-origin" class="center">
+      </iframe>
+    </body>
+<html>
+
+<!-- Text Route -->
+<!-- https://carbon.now.sh/?bg=rgba(255%2C255%2C255%2C1)&t=one-dark&wt=none&l=python&ds=true&dsyoff=3px&dsblur=10px&wc=true&wa=true&pv=29px&ph=39px&ln=true&fm=Hack&fs=14px&lh=133%25&si=false&es=2x&wm=false&code=import%2520requests%250Aimport%2520json%250Aimport%2520numpy%2520as%2520np%250Afrom%2520passlib.apps%2520import%2520custom_app_context%2520as%2520pwd_context%250A%250AAPI_ENDPOINT%2520%253D%2520%27https%253A%252F%252Fembeddings.gh-issue-labeler.com%252Ftext%27%250AAPI_KEY%2520%253D%2520%27YOUR_API_KEY%27%2520%2523%2520Contact%2520maintainers%2520to%2520get%2520this%250A%250A%2523%2520A%2520toy%2520example%2520of%2520a%2520GitHub%2520Issue%2520title%2520and%2520body%250Adata%2520%253D%2520%257B%27title%27%253A%2520%27Fix%2520the%2520issue%27%252C%2520%250A%2520%2520%2520%2520%2520%2520%2520%2520%27body%27%253A%2520%27I%2520am%2520encountering%2520an%2520error%255Cn%2520when%2520trying%2520to%2520push%2520the%2520button.%27%257D%250A%250A%2523%2520sending%2520post%2520request%2520and%2520saving%2520response%2520as%2520response%2520object%2520%250Ar%2520%253D%2520requests.post(url%253DAPI_ENDPOINT%252C%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520headers%253D%257B%27Token%27%253Apwd_context.hash(API_KEY)%257D%252C%250A%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520%2520json%253Ddata)%250A%250A%2523%2520convert%2520string%2520back%2520into%2520a%2520numpy%2520array%250Aembeddings%2520%253D%2520np.frombuffer(r.content%252C%2520dtype%253D%27%253Cf4%27) -->
