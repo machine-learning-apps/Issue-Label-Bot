@@ -1,6 +1,6 @@
 from mdparse.parser import transform_pre_rules, compose
 from fastai.text.transform import defaults
-from fastai.core import PathOrStr
+from fastai.core import PathOrStr, parallel
 from fastai.basic_train import load_learner
 from torch import Tensor, cat
 import pandas as pd
@@ -24,7 +24,7 @@ class InferenceWrapper:
     
     
     def numericalize(self, x:str) -> Tensor:
-        return self.learn.data.one_item(self.parse(x))
+        return self.learn.data.one_item(self.parse(x))[0]
     
     def get_raw_features(self, x:str) -> Tensor:
         """
@@ -32,7 +32,7 @@ class InferenceWrapper:
         
         Returns Tensor of the shape (1, sequence-length, ndim)
         """
-        seq_ints = self.numericalize(x)[0]
+        seq_ints = self.numericalize(x)
         self.encoder.reset() # so the hidden states reset between predictions
         
         return self.encoder.forward(seq_ints)[-1][-1]
@@ -65,3 +65,9 @@ class InferenceWrapper:
         
         df = pd.DataFrame(lst)
         return df
+
+    def df_to_emb(self, dataframe:pd.DataFrame) -> pd.DataFrame:
+        # clean dataframe 
+        new_df = self.process_df(dataframe)
+        arr = new_df['text'].to_list()
+        return arr
