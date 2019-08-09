@@ -128,7 +128,7 @@ def bot():
             if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
                 # send the event to pubsub
                 publish_message(installation_id, username, repo, issue_num)
-                return 'ok'
+                return f'Labeling of {username}/{repo}/issues/{issue_num} delegated to microservice via pubsub.'
         except Exception as e:
             logging.error(e)
 
