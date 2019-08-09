@@ -41,6 +41,10 @@ LOG = logging.getLogger(__name__)
 prediction_threshold = defaultdict(lambda: .52)
 prediction_threshold['question'] = .60
 
+# get repos that should possibly be forwarded
+# dict: {repo_owner/repo_name: proportion}
+forwarded_repos = get_forwarded_repos()
+
 def init_issue_labeler():
     "Load all necessary artifacts to make predictions."
     title_pp_url = "https://storage.googleapis.com/codenet/issue_labels/issue_label_model_files/title_pp.dpkl"
@@ -119,15 +123,14 @@ def bot():
         if private:
             return 'ok'
 
-        # get repos that should possibly be forwarded
-        # dict: {repo_owner/repo_name: proportion}
-        forwarded_repos = get_forwarded_repos()
-
-        # forward some issues of specific repos and select by their given forwarded proportion
-        if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
-            # send the event to pubsub
-            publish_message(installation_id, username, repo, issue_num)
-            return 'ok'
+        try:
+            # forward some issues of specific repos and select by their given forwarded proportion
+            if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
+                # send the event to pubsub
+                publish_message(installation_id, username, repo, issue_num)
+                return 'ok'
+        except Exception as e:
+            logging.error(e)
 
         # write the issue to the database using ORM
         issue_db_obj = Issues(repo=repo,
