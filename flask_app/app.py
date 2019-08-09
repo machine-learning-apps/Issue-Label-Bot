@@ -17,6 +17,9 @@ from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import requests
 import yaml
+import random
+from forward_utils import get_forwarded_repos
+from forward_utils import publish_message
 
 app = Flask(__name__)
 app_url = os.getenv('APP_URL')
@@ -114,6 +117,16 @@ def bot():
 
         # don't do anything if repo is private.
         if private:
+            return 'ok'
+
+        # get repos that should possibly be forwarded
+        # dict: {repo_owner/repo_name: proportion}
+        forwarded_repos = get_forwarded_repos()
+
+        # forward some issues of specific repos and select by their given forwarded proportion
+        if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
+            # send the event to pubsub
+            publish_message(installation_id, username, repo, issue_num)
             return 'ok'
 
         # write the issue to the database using ORM
