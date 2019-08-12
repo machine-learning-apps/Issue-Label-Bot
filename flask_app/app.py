@@ -20,6 +20,7 @@ import yaml
 import random
 from forward_utils import get_forwarded_repos
 from forward_utils import publish_message
+from forward_utils import create_topic
 
 app = Flask(__name__)
 app_url = os.getenv('APP_URL')
@@ -40,6 +41,10 @@ LOG = logging.getLogger(__name__)
 # set the prediction threshold for everything except for the label question which has a different threshold
 prediction_threshold = defaultdict(lambda: .52)
 prediction_threshold['question'] = .60
+
+# set the project id and topic name for GCP pubsub
+pubsub_project_id = os.environ['GCP_PROJECT_ID']
+pubsub_topic_name = 'event_queue'
 
 # get repos that should possibly be forwarded
 # dict: {repo_owner/repo_name: proportion}
@@ -78,6 +83,7 @@ def init():
 
     app.graph = tf.get_default_graph()
     app.issue_labeler = init_issue_labeler()
+    create_topic(pubsub_project_id, pubsub_topic_name)
 
 # this redirects http to https
 # from https://stackoverflow.com/a/53501072/1518630
@@ -127,10 +133,11 @@ def bot():
             # forward some issues of specific repos and select by their given forwarded proportion
             if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
                 # send the event to pubsub
-                publish_message(installation_id, username, repo, issue_num)
+                publish_message(pubsub_project_id, pubsub_topic_name,
+                                installation_id, username, repo, issue_num)
                 return f'Labeling of {username}/{repo}/issues/{issue_num} delegated to microservice via pubsub.'
         except Exception as e:
-            logging.error(e)
+            LOG.error(e)
 
         # write the issue to the database using ORM
         issue_db_obj = Issues(repo=repo,
