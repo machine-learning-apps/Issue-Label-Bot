@@ -26,9 +26,9 @@ def check_topic_path_exists(project_id, topic_path):
             return True
     return False
 
-def create_topic(project_id, topic_name):
+def create_topic_if_not_exists(project_id, topic_name):
     """
-    Create a new pubsub topic.
+    Create a new pubsub topic if the topic name does not exist in the project.
     Args:
       project_id: project id on GCP
       topic_name: topic name used to create topic path
