@@ -88,7 +88,7 @@ def init():
 
     with open('pubsub-credentials.json', 'w') as f:
         # set GCP Auth per https://cloud.google.com/docs/authentication/getting-started
-        json.dump(pubsub_json_string, f)
+        json.dump(eval(pubsub_json_string), f)
         json_file_path = os.path.realpath(f.name)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_file_path
 
