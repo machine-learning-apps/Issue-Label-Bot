@@ -75,5 +75,4 @@ COPY flask_app flask_app/
 EXPOSE 3000 80 443
 WORKDIR flask_app/
 
-#CMD python app.py
-CMD gunicorn -w 3 app:app -b 0.0.0.0:$PORT
+CMD python app.py
