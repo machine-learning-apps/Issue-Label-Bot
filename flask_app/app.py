@@ -383,6 +383,10 @@ def get_yaml(owner, repo):
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
+
+    # if we are testing, don't bother checking the payload
+    if os.getenv('DEVELOPMENT_FLAG'): return True
+
     # Inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py#L191-L198
     signature = request.headers['X-Hub-Signature'].split('=')[1]
 
