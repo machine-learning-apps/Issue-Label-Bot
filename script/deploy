@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+docker push hamelsmu/mlapp
+kubectl -n mlapp apply -f $(dirname "$0")/../deployment/deployments.yaml
+kubectl -n mlapp get pods
