@@ -1,5 +1,6 @@
 import os
 import logging
+import json
 from collections import defaultdict
 import hmac
 from flask import (abort, Flask, session, render_template,
@@ -80,6 +81,16 @@ def init():
 
     with open('private-key.pem', 'wb') as f:
         f.write(str.encode(pem_string))
+
+    pubsub_json_string = os.getenv('PUBSUB_CREDENTIALS_JSON_BLOB')
+    if not pubsub_json_string:
+        raise ValueError('Environment variable PUBSUB_CREDENTIALS_JSON_BLOB was not supplied.')
+
+    with open('pubsub-credentials.json', 'w') as f:
+        # set GCP Auth per https://cloud.google.com/docs/authentication/getting-started
+        json.dump(pubsub_json_string, f)
+        json_file_path = os.path.realpath(f.name)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_file_path
 
     app.graph = tf.get_default_graph()
     app.issue_labeler = init_issue_labeler()
