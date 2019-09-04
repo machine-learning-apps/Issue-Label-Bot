@@ -56,7 +56,7 @@ Deploying it
 
    ```
    gsutil cp gs://github-probots_secrets/ml-app-inference-secret-test.yaml /tmp
-   kubectl apply -f /tmp/ml-app-inference-secret-test.yaml
+   kubectl apply -f /tmp/ml-app-inference-secret-test.yaml -n mlapp
    ```
 
 1. Create the service
@@ -67,6 +67,6 @@ Deploying it
 
 1. Create the ingress
 
-    ```
-    kubectl apply -f ingress-test.yaml
-    ```
+   ```
+   kubectl apply -f ingress-test.yaml
+   ```
