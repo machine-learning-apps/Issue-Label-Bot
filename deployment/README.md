@@ -42,6 +42,7 @@ There is a staging cluster for testing running in
 
 * **GCP project**: issue-label-bot-dev
 * **cluster**: github-mlapp-test
+* **namespace**: mlapp
 
 Deploying it
 
