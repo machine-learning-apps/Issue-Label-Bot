@@ -10,4 +10,4 @@ spec:
     protocol: TCP
   selector:
     app: ml-github-app
-  type: LoadBalancer
+  type: NodePort

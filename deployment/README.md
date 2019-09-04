@@ -63,3 +63,9 @@ Deploying it
    ```
    kubectl apply -f service-test.yaml
    ```
+
+1. Create the ingress
+
+    ```
+    kubectl apply -f ingress-test.yaml
+    ```
