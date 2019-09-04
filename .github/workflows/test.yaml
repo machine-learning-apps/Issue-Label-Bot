@@ -1,0 +1,9 @@
+name: k8s Auth Without Docker
+on: [push]
+
+jobs:
+  test:
+    name: test auth
+    runs-on: ubuntu-latest
+    steps:
+      run: echo "Hello-World"
