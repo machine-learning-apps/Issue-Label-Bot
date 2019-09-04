@@ -1,0 +1,28 @@
+name: test
+
+on: push
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Step 1
+      id: step1
+      run: echo "::set-output name=VAR1::Hamel"
+
+    - name: Step 2
+      id: step2
+      run: echo "::set-env name=VAR2::Husain"
+
+    - name: emit env #THIS will print the SHA
+      run: |
+        echo $VAR1
+        echo $VAR2
+      env:
+        VAR1: ${{ steps.step1.outputs.VAR1 }}
+
+    - name: this should not run
+      run: echo "This should not run"
+      if: steps.step1.outputs.VAR1 == 'Lucy'
