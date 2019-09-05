@@ -1,5 +1,6 @@
 import os
 import logging
+import json
 from collections import defaultdict
 import hmac
 from flask import (abort, Flask, session, render_template,
@@ -17,6 +18,10 @@ from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import requests
 import yaml
+import random
+from forward_utils import get_forwarded_repos
+from forward_utils import publish_message
+from forward_utils import create_topic_if_not_exists
 
 app = Flask(__name__)
 app_url = os.getenv('APP_URL')
@@ -37,6 +42,14 @@ LOG = logging.getLogger(__name__)
 # set the prediction threshold for everything except for the label question which has a different threshold
 prediction_threshold = defaultdict(lambda: .52)
 prediction_threshold['question'] = .60
+
+# set the project id and topic name for GCP pubsub
+PUBSUB_PROJECT_ID = os.environ['GCP_PROJECT_ID']
+PUBSUB_TOPIC_NAME = os.environ['GCP_PUBSUB_TOPIC_NAME']
+
+# get repos that should possibly be forwarded
+# dict: {repo_owner/repo_name: proportion}
+forwarded_repos = get_forwarded_repos()
 
 def init_issue_labeler():
     "Load all necessary artifacts to make predictions."
@@ -69,8 +82,19 @@ def init():
     with open('private-key.pem', 'wb') as f:
         f.write(str.encode(pem_string))
 
+    pubsub_json_string = os.getenv('PUBSUB_CREDENTIALS_JSON_BLOB')
+    if not pubsub_json_string:
+        raise ValueError('Environment variable PUBSUB_CREDENTIALS_JSON_BLOB was not supplied.')
+
+    with open('pubsub-credentials.json', 'w') as f:
+        # set GCP Auth per https://cloud.google.com/docs/authentication/getting-started
+        json.dump(eval(pubsub_json_string), f)
+        json_file_path = os.path.realpath(f.name)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_file_path
+
     app.graph = tf.get_default_graph()
     app.issue_labeler = init_issue_labeler()
+    create_topic_if_not_exists(PUBSUB_PROJECT_ID, PUBSUB_TOPIC_NAME)
 
 # this redirects http to https
 # from https://stackoverflow.com/a/53501072/1518630
@@ -115,6 +139,16 @@ def bot():
         # don't do anything if repo is private.
         if private:
             return 'ok'
+
+        try:
+            # forward some issues of specific repos and select by their given forwarded proportion
+            if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
+                # send the event to pubsub
+                publish_message(PUBSUB_PROJECT_ID, PUBSUB_TOPIC_NAME,
+                                installation_id, username, repo, issue_num)
+                return f'Labeling of {username}/{repo}/issues/{issue_num} delegated to microservice via pubsub.'
+        except Exception as e:
+            LOG.error(e)
 
         # write the issue to the database using ORM
         issue_db_obj = Issues(repo=repo,
@@ -349,6 +383,10 @@ def get_yaml(owner, repo):
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
+
+    # if we are testing, don't bother checking the payload
+    if os.getenv('DEVELOPMENT_FLAG'): return True
+
     # Inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py#L191-L198
     signature = request.headers['X-Hub-Signature'].split('=')[1]
 

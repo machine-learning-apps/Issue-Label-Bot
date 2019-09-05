@@ -1,0 +1,15 @@
+{
+"action": "opened",
+    "issue": {
+      "number": 5,
+      "title": "TESTING THIS",
+      "body": "Testing the app with the payload."
+    },
+    "repository": {
+      "full_name": "abcdefgs0324/issue-label-bot-test",
+      "private": false
+      },
+    "installation": {
+      "id": 1585757
+    }
+}

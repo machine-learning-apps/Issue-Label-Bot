@@ -46,6 +46,21 @@ spec:
             secretKeyRef:
               name: ml-app-inference-secret
               key: APP_ID
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: GCP_PROJECT_ID
+        - name: GCP_PUBSUB_TOPIC_NAME
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: GCP_PUBSUB_TOPIC_NAME
+        - name: PUBSUB_CREDENTIALS_JSON_BLOB
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: PUBSUB_CREDENTIALS_JSON_BLOB
         - name: FLASK_ENV
           value: production
         - name: PORT

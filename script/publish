@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+read -p "Are you sure you want to deploy the app? If so, enter 'p' " -n 1 -r
+echo    # move to a new line
+if [[ $REPLY =~ ^[Pp]$ ]]
+then
+    docker push hamelsmu/mlapp
+    kubectl -n mlapp apply -f $(dirname "$0")/../deployment/deployments.yaml
+    kubectl -n mlapp get pods
+fi
