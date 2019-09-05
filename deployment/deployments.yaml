@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ml-github-app
-        image: hamelsmu/mlapp
+        image: hamelsmu/mlapp:201909051520
         command: ["python", "app.py"]
         readinessProbe:
           httpGet:
