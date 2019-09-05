@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-github-app-test
+  namespace: mlapp
+  labels:
+    app: ml-github-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ml-github-app
+  template:
+    metadata:
+      labels:
+        app: ml-github-app
+    spec:
+      containers:
+      - name: ml-github-app
+        image: gcr.io/issue-label-bot-dev/github-mlapp-test
+        command: ["python", "app.py"]
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        env:
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: PRIVATE_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: DATABASE_URL
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: WEBHOOK_SECRET
+        - name: APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: APP_ID
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: GCP_PROJECT_ID
+        - name: GCP_PUBSUB_TOPIC_NAME
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: GCP_PUBSUB_TOPIC_NAME
+        - name: PUBSUB_CREDENTIALS_JSON_BLOB
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret-test
+              key: PUBSUB_CREDENTIALS_JSON_BLOB
+        - name: FLASK_ENV
+          value: production
+        - name: PORT
+          value: '3000'
+        - name: APP_URL
+          value: https://mlbot.net/
+        - name: APP_URL_HEROKU
+          value: https://fathomless-forest-27162.herokuapp.com/
+        - name: authors
+          value: 'c'
+        - name: DEVELOPMENT_FLAG
+          value: 'True'
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 3000

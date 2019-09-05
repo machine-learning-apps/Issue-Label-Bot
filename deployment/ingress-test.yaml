@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ml-gh-app-test
+  namespace: mlapp
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: mlbot-test
+    networking.gke.io/managed-certificates: mlbot-net-test
+spec:
+  backend:
+    serviceName: ml-github-app-test
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ml-github-app-test
+          servicePort: 3000
+  # tls:
+  #   - hosts:
+  #     - predict.mlbot.net
+  #     - mlbot.net
+  #     secretName: predict-mlapp-tls
