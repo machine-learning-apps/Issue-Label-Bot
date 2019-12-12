@@ -126,6 +126,6 @@ urllib3==1.24.1
 wasabi==0.2.1
 wcwidth==0.1.7
 webencodings==0.5.1
-werkzeug==0.15.1
+werkzeug==0.15.3
 wheel==0.33.1 ; python_version >= '3'
 widgetsnbextension==3.4.2
