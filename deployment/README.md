@@ -5,6 +5,21 @@ with mlbot.net.
 
 This is currently running on a GKE cluster.
 
+See [machine-learning-apps/Issue-Label-Bot#57](https://github.com/machine-learning-apps/Issue-Label-Bot/issues/57) for a log of how
+the service was deployed.
+
+To build a new image
+
+```
+skaffold build
+```
+
+Then to update the image
+
+```
+cd overlays/dev|prod
+kustomize edit set image gcr.io/github-probots/label-bot-frontend=gcr.io/github-probots/label-bot-frontend:${TAG}@${SHA}
+```
 
 ## github-probots
 
@@ -40,11 +55,17 @@ Deploying it
 
 There is a staging cluster for testing running in
 
-* **GCP project**: issue-label-bot-dev
-* **cluster**: github-mlapp-test
-* **namespace**: mlapp
+* **GCP project**: github-probots
+* **cluster**:  kf-ci-ml
+* **namespace**: label-bot-dev
 
 Deploying it
+
+1. Create the secrets
+
+
+
+TODO(jlewi): instructions below are outdated
 
 1. Create the deployment
 

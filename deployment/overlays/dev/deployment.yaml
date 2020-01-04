@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-github-app
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: frontend
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: DATABASE_URL
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: WEBHOOK_SECRET        
+        # The values for the Kubeflow kf-label-bot-dev application
+        # See kubeflow/code-intelligence#84. This is suitable
+        # for development but shouldn't be used in production       
+        - name: APP_ID
+          value: "50112"
+        # Path the GitHub app PEM key
+        - name: GITHUB_APP_PEM_KEY
+          value: /var/secrets/github/kf-label-bot-dev.private-key.pem
+        # The GCP project and pubsub topic to publish to should
+        # correspond to the production backend
+        - name: GCP_PROJECT_ID
+          value: issue-label-bot-dev
+        - name: GCP_PUBSUB_TOPIC_NAME
+          value: TEST_event_queue
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/user-gcp-sa.json        
+        - name: FLASK_ENV
+          value: production
+  

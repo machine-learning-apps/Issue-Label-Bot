@@ -68,6 +68,7 @@ RUN pip install \
     tensorflow==1.12.0 \
     seldon-core==0.2.6
 
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY flask_app flask_app/
