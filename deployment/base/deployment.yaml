@@ -35,7 +35,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: ml-app-inference-secret
-              key: WEBHOOK_SECRET
+              key: WEBHOOK_SECRET              
         # The values for the Kubeflow kf-label-bot-dev application
         # See kubeflow/code-intelligence#84. This is suitable
         # for development but shouldn't be used in production       

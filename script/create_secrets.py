@@ -15,8 +15,12 @@ import os
 import re
 import subprocess
 
+DEV_ENVIRONMENT = "dev"
+PROD_ENVIRONMENT = "prod"
+
 # The namespace for the dev environment.
 DEV_NAMESPACE = "label-bot-dev"
+PROD_NAMESPACE = "label-bot-prod"
 
 GCS_REGEX = re.compile("gs://([^/]*)(/.*)?")
 
@@ -100,42 +104,60 @@ class SecretCreator:
     subprocess.check_call(command)
 
   @staticmethod
-  def create_dev():
-    """Create the secrets for the dev environment."""
+  def create(env):
+    """Create the secrets for the dev environment.
+
+    Args:
+      env: The environment to create the secrets in.
+    """
+
+    if env == DEV_ENVIRONMENT:
+      namespace = DEV_NAMESPACE
+      github_app_pem_key = ("gs://issue-label-bot-dev_secrets/"
+                           "kf-label-bot-dev.2019-12-30.private-key.pem")
+      webhook_gcs = ("gs://issue-label-bot-dev_secrets/"
+                     "kf-label-bot-dev.webhook.secret")
+    elif env == PROD_ENVIRONMENT:
+      namespace = PROD_NAMESPACE
+      github_app_pem_key = ("gs://github-probots_secrets/"
+                            "issue-label-bot-github-app.private-key.pem")
+      webhook_gcs = ("gs://github-probots_secrets/"
+                     "issue-label-bot-prod.webhook.secret")
+    else:
+      raise ValueError(f"env={env} is not an allowed value; must be "
+                       f"{DEV_ENVIRONMENT} or {PROD_ENVIRONMENT}")
 
     k8s_config.load_kube_config(persist_config=False)
 
     client = k8s_client.ApiClient()
 
-    if secret_exists(DEV_NAMESPACE, "user-gcp-sa", client):
-      logging.warning(f"Secret {DEV_NAMESPACE}/user-gcp-sa already exists; "
+    if secret_exists(namespace, "user-gcp-sa", client):
+      logging.warning(f"Secret {namespace}/user-gcp-sa already exists; "
                       f"Not recreating it.")
     else:
       # We get a GCP secret by copying it from the kubeflow namespace.
       SecretCreator.copy_secret("kubeflow/user-gcp-sa",
-                                f"{DEV_NAMESPACE}/user-gcp-sa")
+                                f"{namespace}/user-gcp-sa")
 
-    if secret_exists(DEV_NAMESPACE, "github-app", client):
-      logging.warning(f"Secret {DEV_NAMESPACE}/github-app already exists; "
+    if secret_exists(namespace, "github-app", client):
+      logging.warning(f"Secret {namespace}/github-app already exists; "
                       f"Not recreating it.")
     else:
       # Create the secret containing the PEM key for the github app
-      SecretCreator._secret_from_gcs(f"{DEV_NAMESPACE}/github-app",
-                                     "gs://issue-label-bot-dev_secrets/kf-label-bot-dev.2019-12-30.private-key.pem")
+      SecretCreator._secret_from_gcs(f"{namespace}/github-app", github_app_pem_key)
 
     # Create the inference secret containing the postgres database with
     # postgres secret and the webhook secret
     inference_secret = "ml-app-inference-secret"
-    if secret_exists(DEV_NAMESPACE, inference_secret, client):
-      logging.warning(f"Secret {DEV_NAMESPACE}/{inference_secret} already exists; "
+    if secret_exists(namespace, inference_secret, client):
+      logging.warning(f"Secret {namespace}/{inference_secret} already exists; "
                       f"Not recreating it.")
     else:
       postgres = _read_gcs_path("gs://issue-label-bot-dev_secrets/"
                                 "issue-label-bot.postgres")
-      webhook = _read_gcs_path("gs://issue-label-bot-dev_secrets/"
-                                "kf-label-bot-dev.webhook.secret")
+      webhook = _read_gcs_path(webhook_gcs)
 
-      subprocess.check_call(["kubectl", "-n", DEV_NAMESPACE, "create",
+      subprocess.check_call(["kubectl", "-n", namespace, "create",
                              "secret", "generic",
                              inference_secret,
                              f"--from-literal=DATABASE_URL={postgres}",
