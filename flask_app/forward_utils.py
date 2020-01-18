@@ -5,7 +5,7 @@ from google.cloud import pubsub
 def get_forwarded_repos(yaml_path='forwarded_repo.yaml'):
     with open(yaml_path, 'r') as f:
         config = yaml.safe_load(f)
-    return config['repos']
+    return config
 
 def check_topic_path_exists(project_id, topic_path):
     """

@@ -1,0 +1,7 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend  
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: label-bot-dev
+    networking.gke.io/managed-certificates: certificate

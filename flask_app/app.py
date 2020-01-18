@@ -17,6 +17,7 @@ from urllib.request import urlopen
 from sql_models import db, Issues, Predictions
 import tensorflow as tf
 import requests
+import traceback
 import yaml
 import random
 from forward_utils import get_forwarded_repos
@@ -49,7 +50,8 @@ PUBSUB_TOPIC_NAME = os.environ['GCP_PUBSUB_TOPIC_NAME']
 
 # get repos that should possibly be forwarded
 # dict: {repo_owner/repo_name: proportion}
-forwarded_repos = get_forwarded_repos()
+forwarded_repos = get_forwarded_repos(os.getenv("LABEL_BOT_CONFIG",
+                                                "forwarded_repo.yaml"))
 
 def init_issue_labeler():
     "Load all necessary artifacts to make predictions."
@@ -68,30 +70,15 @@ def init_issue_labeler():
     model_path = get_file(fname=model_filename, origin=model_url)
     model = load_model(model_path)
 
+    logging.info(f"Forwarded repo config:\n{forwarded_repos}")
     return IssueLabeler(body_text_preprocessor=body_pp,
                         title_text_preprocessor=title_pp,
                         model=model)
 
 def init():
     "Load all necessary artifacts to make predictions."
-    #save keyfile
-    pem_string = os.getenv('PRIVATE_KEY')
-    if not pem_string:
-        raise ValueError('Environment variable PRIVATE_KEY was not supplied.')
-
-    with open('private-key.pem', 'wb') as f:
-        f.write(str.encode(pem_string))
-
-    pubsub_json_string = os.getenv('PUBSUB_CREDENTIALS_JSON_BLOB')
-    if not pubsub_json_string:
-        raise ValueError('Environment variable PUBSUB_CREDENTIALS_JSON_BLOB was not supplied.')
-
-    with open('pubsub-credentials.json', 'w') as f:
-        # set GCP Auth per https://cloud.google.com/docs/authentication/getting-started
-        json.dump(eval(pubsub_json_string), f)
-        json_file_path = os.path.realpath(f.name)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_file_path
-
+    logging.info(f"Initializing the app")
+    logging.info(f"Forwarded repo config:\n{forwarded_repos}")
     app.graph = tf.get_default_graph()
     app.issue_labeler = init_issue_labeler()
     create_topic_if_not_exists(PUBSUB_PROJECT_ID, PUBSUB_TOPIC_NAME)
@@ -123,95 +110,124 @@ def index():
 @app.route("/event_handler", methods=["POST"])
 def bot():
     "Handle payload"
+
+    logging.debug("Request Data:\n%s", request.data)
+    if not request.json:
+        logging.error("Request is not a json request. Please fix.")
+        # TODO(jlewi): What is the proper code invalid request?
+        abort(400)
+
+    logging.debug("Handling request with action: %s",
+                  request.json.get('action', 'None'))
     # authenticate webhook to make sure it is from GitHub
     verify_webhook(request)
 
     # Check if payload corresponds to an issue being opened
-    if 'action' in request.json and request.json['action'] == 'opened' and ('issue' in request.json):
-        # get metadata
-        installation_id = request.json['installation']['id']
-        issue_num = request.json['issue']['number']
-        private = request.json['repository']['private']
-        username, repo = request.json['repository']['full_name'].split('/')
-        title = request.json['issue']['title']
-        body = request.json['issue']['body']
+    if 'action' not in request.json or request.json['action'] != 'opened' or 'issue' not in request.json:
+        logging.warning("Event is not for an issue with action opened.")
+        return 'ok'
 
-        # don't do anything if repo is private.
-        if private:
-            return 'ok'
+    # get metadata
+    installation_id = request.json['installation']['id']
+    issue_num = request.json['issue']['number']
+    private = request.json['repository']['private']
+    username, repo = request.json['repository']['full_name'].split('/')
+    title = request.json['issue']['title']
+    body = request.json['issue']['body']
 
-        try:
-            # forward some issues of specific repos and select by their given forwarded proportion
-            if f'{username}/{repo}' in forwarded_repos and random.random() <= forwarded_repos[f'{username}/{repo}']:
+    # don't do anything if repo is private.
+    if private:
+        logging.info(f"Recieved a private issue which is being skipped")
+        return 'ok'
+
+    logging.info(f"Recieved {username}/{repo}#{issue_num}")
+    try:
+        # forward some issues of specific repos and select by their given forwarded proportion
+        forward_probability = None
+        repo_spec = f'{username}/{repo}'
+        if username in forwarded_repos.get("orgs", {}):
+            forward_probability = forwarded_repos["orgs"][username]
+        elif repo_spec in forwarded_repos.get("repos", {}):
+            forward_probability = forwarded_repos["repos"][repo_spec]
+
+        if forward_probability:
+            if random.random() <= forward_probability:
+                logging.info(f"Publishing {username}/{repo}#{issue_num} to "
+                             f"projects/{PUBSUB_PROJECT_ID}/topics/{PUBSUB_TOPIC_NAME}")
                 # send the event to pubsub
                 publish_message(PUBSUB_PROJECT_ID, PUBSUB_TOPIC_NAME,
                                 installation_id, username, repo, issue_num)
                 return f'Labeling of {username}/{repo}/issues/{issue_num} delegated to microservice via pubsub.'
-        except Exception as e:
-            LOG.error(e)
+            else:
+                logging.info(f"{username}/{repo}#{issue_num} not selected for "
+                             f"publishing to "
+                             f"projects/{PUBSUB_PROJECT_ID}/topics/{PUBSUB_TOPIC_NAME}")
+    except Exception as e:
+        logging.error(f"Exception occured while handling issue "
+                      f"{username}/{repo}#{issue_num}\n Exception: {e}\n"
+                      f"{traceback.format_exc()}")
 
-        # write the issue to the database using ORM
-        issue_db_obj = Issues(repo=repo,
-                              username=username,
-                              issue_num=issue_num,
-                              title=title,
-                              body=body)
+    # write the issue to the database using ORM
+    issue_db_obj = Issues(repo=repo,
+                          username=username,
+                          issue_num=issue_num,
+                          title=title,
+                          body=body)
 
-        db.session.add(issue_db_obj)
-        db.session.commit()
+    db.session.add(issue_db_obj)
+    db.session.commit()
 
-        # make predictions with the model
-        with app.graph.as_default():
-            predictions = app.issue_labeler.get_probabilities(body=body, title=title)
-        #log to console
-        LOG.warning(f'issue opened by {username} in {repo} #{issue_num}: {title} \nbody:\n {body}\n')
-        LOG.warning(f'predictions: {str(predictions)}')
+    # make predictions with the model
+    with app.graph.as_default():
+        predictions = app.issue_labeler.get_probabilities(body=body, title=title)
+    #log to console
+    LOG.warning(f'issue opened by {username} in {repo} #{issue_num}: {title} \nbody:\n {body}\n')
+    LOG.warning(f'predictions: {str(predictions)}')
 
-        # get the most confident prediction
-        argmax = max(predictions, key=predictions.get)
+    # get the most confident prediction
+    argmax = max(predictions, key=predictions.get)
 
-        # get the isssue handle
-        issue = get_issue_handle(installation_id, username, repo, issue_num)
+    # get the isssue handle
+    issue = get_issue_handle(installation_id, username, repo, issue_num)
 
 
-        labeled = True
-        threshold = prediction_threshold[argmax]
+    labeled = True
+    threshold = prediction_threshold[argmax]
 
-        # take an action if the prediction is confident enough
-        if (predictions[argmax] >= threshold):
-            # initialize the label name to = the argmax
-            label_name = argmax
+    # take an action if the prediction is confident enough
+    if (predictions[argmax] >= threshold):
+        # initialize the label name to = the argmax
+        label_name = argmax
 
-            # handle the yaml file
-            yaml = get_yaml(owner=username, repo=repo)
-            if yaml and 'label-alias' in yaml:
-                if  argmax in yaml['label-alias']:
-                    LOG.warning('User has custom names: ', yaml['label-alias'])
-                    new_name = yaml['label-alias'][argmax]
-                    if new_name:
-                        label_name = new_name
+        # handle the yaml file
+        yaml = get_yaml(owner=username, repo=repo)
+        if yaml and 'label-alias' in yaml:
+            if  argmax in yaml['label-alias']:
+                LOG.warning('User has custom names: ', yaml['label-alias'])
+                new_name = yaml['label-alias'][argmax]
+                if new_name:
+                    label_name = new_name
 
-            # create message
-            message = f'Issue-Label Bot is automatically applying the label `{label_name}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [app homepage](https://github.com/marketplace/issue-label-bot), [dashboard]({app_url}data/{username}/{repo}) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
-            # label the issue using the GitHub api
-            issue.add_labels(label_name)
-        
-        else:
-            message = f'Issue Label Bot is not confident enough to auto-label this issue. See [dashboard]({app_url}data/{username}/{repo}) for more details.'
-            LOG.warning(f'Not confident enough to label this issue: # {str(issue_num)}')
-            labeled = False
-        
-        # Make a comment using the GitHub api
-        comment = issue.create_comment(message)
+        # create message
+        message = f'Issue-Label Bot is automatically applying the label `{label_name}` to this issue, with a confidence of {predictions[argmax]:.2f}. Please mark this comment with :thumbsup: or :thumbsdown: to give our bot feedback! \n\n Links: [app homepage](https://github.com/marketplace/issue-label-bot), [dashboard]({app_url}data/{username}/{repo}) and [code](https://github.com/hamelsmu/MLapp) for this bot.'
+        # label the issue using the GitHub api
+        issue.add_labels(label_name)
 
-        # log the event to the database using ORM
-        issue_db_obj.add_prediction(comment_id=comment.id,
-                                    prediction=argmax,
-                                    probability=predictions[argmax],
-                                    logs=str(predictions),
-                                    threshold=threshold, 
-                                    labeled=labeled)
-        return 'ok'
+    else:
+        message = f'Issue Label Bot is not confident enough to auto-label this issue. See [dashboard]({app_url}data/{username}/{repo}) for more details.'
+        LOG.warning(f'Not confident enough to label this issue: # {str(issue_num)}')
+        labeled = False
+
+    # Make a comment using the GitHub api
+    comment = issue.create_comment(message)
+
+    # log the event to the database using ORM
+    issue_db_obj.add_prediction(comment_id=comment.id,
+                                prediction=argmax,
+                                probability=predictions[argmax],
+                                logs=str(predictions),
+                                threshold=threshold,
+                                labeled=labeled)
     return 'ok'
 
 @app.route("/repos/<string:username>", methods=["GET"])
@@ -223,20 +239,20 @@ def get_repos(username):
         install_id =  app.app_installation_for_user(f'{username}').id
     except:
         return f'No current installations for {username} found.'
-    
+
     url = f'https://api.github.com/installation/repositories'
     headers = {'Authorization': f'token {ghapp.get_installation_access_token(install_id)}',
                'Accept': 'application/vnd.github.machine-man-preview+json'}
-    
+
     response = requests.get(url=url, headers=headers, params={'per_page':100})
     if response.status_code == 200:
         repos = response.json()['repositories']
         repos_with_preds = [x.repo for x in Issues.query.filter(Issues.username == username and Issues.predictions != None).distinct(Issues.repo).all()]
         return render_template('repos.html', repos=repos, username=username, repos_with_preds=repos_with_preds)
-    
+
     else:
         return response.status_code
-        
+
 @app.route('/users')
 def show_users():
     users = get_users()
@@ -336,7 +352,11 @@ def update_feedback(owner, repo):
 def get_app():
     "grab a fresh instance of the app handle."
     app_id = os.getenv('APP_ID')
-    key_file_path = 'private-key.pem'
+    if not app_id:
+        raise ValueError("APP_ID environment variable must be set.")
+    key_file_path = os.getenv("GITHUB_APP_PEM_KEY")
+    if not key_file_path:
+        raise ValueError("GITHUB_APP_PEM_KEY environment variable must be set.")
     ghapp = GitHubApp(pem_path=key_file_path, app_id=app_id)
     return ghapp
 
@@ -364,7 +384,7 @@ def get_issue_handle(installation_id, username, repository, number):
 def get_yaml(owner, repo):
     """
     Looks for the yaml file in a /.github directory.
-    
+
     yaml file must be named issue_label_bot.yaml
     """
     ghapp = get_app()
@@ -375,11 +395,13 @@ def get_yaml(owner, repo):
         # get the repo handle, which allows you got get the file contents
         repo = inst.repository(owner=owner, repository=repo)
         results = repo.file_contents('.github/issue_label_bot.yaml').decoded
-    
+
     except:
         return None
-    
+
     return yaml.safe_load(results)
+
+SIGNATURE_HEADER = 'X-Hub-Signature'
 
 def verify_webhook(request):
     "Make sure request is from GitHub.com"
@@ -388,7 +410,10 @@ def verify_webhook(request):
     if os.getenv('DEVELOPMENT_FLAG'): return True
 
     # Inspired by https://github.com/bradshjg/flask-githubapp/blob/master/flask_githubapp/core.py#L191-L198
-    signature = request.headers['X-Hub-Signature'].split('=')[1]
+    if SIGNATURE_HEADER not in request.headers:
+        logging.error("Request is missing header %s", SIGNATURE_HEADER)
+
+    signature = request.headers[SIGNATURE_HEADER].split('=')[1]
 
     mac = hmac.new(str.encode(app.webhook_secret), msg=request.data, digestmod='sha1')
 
@@ -404,6 +429,9 @@ def is_public(owner, repo):
         return False
 
 if __name__ == "__main__":
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
     init()
     with app.app_context():
         # create tables if they do not exist

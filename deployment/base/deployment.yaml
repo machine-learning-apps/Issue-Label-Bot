@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-github-app
+  labels:
+    app: ml-github-app
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: ml-github-app
+  template:
+    metadata:
+      labels:
+        app: ml-github-app
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/github-probots/label-bot-frontend
+        command: ["python", "app.py"]
+        workingDir: "/flask_app"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: DATABASE_URL
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ml-app-inference-secret
+              key: WEBHOOK_SECRET
+        # The values for the Kubeflow kf-label-bot-dev application
+        # See kubeflow/code-intelligence#84. This is suitable
+        # for development but shouldn't be used in production       
+        - name: APP_ID
+          value: "50112"
+        # Pato the GitHub app PEM key
+        - name: GITHUB_APP_PEM_KEY
+          value: /var/secrets/github/kf-label-bot-dev.private-key.pem
+        # The GCP project and pubsub topic to publish to.
+        # Default to the test/dev topic
+        - name: GCP_PROJECT_ID
+          value: issue-label-bot-dev
+        - name: GCP_PUBSUB_TOPIC_NAME
+          value: TEST_event_queue
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/user-gcp-sa.json        
+        - name: FLASK_ENV
+          value: production
+        - name: PORT
+          value: '3000'
+        - name: APP_URL
+          value: https://mlbot.net/
+        - name: authors
+          value: 'c'
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 3000
+        volumeMounts:
+        - name: user-gcp-sa
+          mountPath: /var/secrets/google
+        - name: github-app
+          mountPath: /var/secrets/github
+      volumes:
+      - name: user-gcp-sa
+        secret:
+          secretName: user-gcp-sa
+      - name: github-app
+        secret:
+          secretName: github-app

@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend  
+  annotations:
+    # The ip and certificate name should be overwritten for each
+    # overlay and set to the correct values
+    kubernetes.io/ingress.global-static-ip-name: fake-ip
+    networking.gke.io/managed-certificates: fake-certificate
+spec:
+  backend:
+    serviceName: ml-github-app
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ml-github-app
+          servicePort: 3000

@@ -1,0 +1,40 @@
+# Reference: https://skaffold.dev/docs/references/yaml/
+apiVersion: skaffold/v2alpha1
+kind: Config
+metadata:
+  name: label-bot
+build:
+  artifacts:
+  - image: gcr.io/github-probots/label-bot-frontend
+    # Set the context to the root directory. 
+    # All paths in the Dockerfile should be relative to this one.
+    context: .
+    # TODO(https://github.com/GoogleContainerTools/skaffold/issues/3448): We use manual sync
+    # because inferred sync doesn't work
+    sync:
+      manual:
+      - src: 'flask_app/*.py'
+        dest: '/'    
+    kaniko:
+      dockerfile: deployment/Dockerfile
+      buildContext:
+        gcsBucket: github-probots_skaffold
+      env: 
+        # TODO(GoogleContainerTools/skaffold#3468) skaffold doesn't
+        # appear to work with workload identity
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secret/user-gcp-sa.json
+      cache: {}
+  cluster:    
+    pullSecretName: user-gcp-sa
+    # Build in the kaniko namespace because we need to disable ISTIO sidecar injection
+    # see  GoogleContainerTools/skaffold#3442
+    namespace: label-bot-dev
+    resources:
+      requests:
+        cpu: 8
+        memory: 16Gi
+
+deploy:
+  kustomize:
+    path: deployment/overlays/dev

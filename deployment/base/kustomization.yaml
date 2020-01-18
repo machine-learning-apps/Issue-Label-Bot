@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namePrefix: label-bot-
+commonLabels:
+  app: label-bot
+  service: label-bot
+images:
+- name: gcr.io/github-probots/label-bot-frontend
+  newName: gcr.io/github-probots/label-bot-frontend
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
