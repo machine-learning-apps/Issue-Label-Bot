@@ -1,8 +1,7 @@
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
-  name: mlbot-net-2
-  namespace: mlapp
+  name: certificate
 spec:
   domains:
-    - mlbot.net
+    - label-bot-prod.mlbot.net

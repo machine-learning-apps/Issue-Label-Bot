@@ -17,16 +17,23 @@ class SendRequest:
 
     secret_decoded = base64.b64decode(secret).decode()
 
+    if url != "https://label-bot-dev.mlbot.net/event_handler":
+      logging.error("You aren't using the dev label bot webhook but "
+                    "send_request.py currently hard codes the GitHub App "
+                    "Install ID to kf-label-bot-dev on kubeflow/code-intelligence "
+                    "we need to change that in order to be able to allow "
+                    "worker to actually write to the repo.")
     # TODO(jlewi): We should allow specificing a specific issue.
     payload = {
       "action": "opened",
       # Installation corresponding to kf-label-bot-dev on
       # kubeflow/code-intelligence
       "installation": {
+        # TODO(jlewi): This is the installation id of the kf-label-bot-dev
         "id": 5980888,
       },
       "issue": {
-        "number": 99,
+        "number": 104,
         "title": "Test kf-label bot-dev this is a bug",
         "body": ("Test whether events are correctly routed to the dev instance."
                  "If not then there is a bug in the setup")
@@ -49,7 +56,10 @@ class SendRequest:
 
     # We use data and not json because we need to compute the hash of the
     # data to match the signature
-    requests.post(url, data=data, headers=headers)
+    logging.info(f"Send url: {url}")
+    response = requests.post(url, data=data, headers=headers)
+
+    logging.info(f"Response {response}")
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO,

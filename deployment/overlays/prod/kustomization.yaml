@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  environment: prod
+namespace: label-bot-prod
+images:
+- name: gcr.io/github-probots/label-bot-frontend
+  newName: gcr.io/github-probots/label-bot-frontend
+  newTag: 2cb624e
+resources:
+- certificate.yaml
+- ../../base
+patchesStrategicMerge:
+- deployment.yaml
+- ingress.yaml

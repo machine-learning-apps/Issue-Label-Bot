@@ -4,6 +4,7 @@ metadata:
   name: ml-github-app
 spec:
   replicas: 9
+  template:
     spec:
       containers:
       - name: frontend
@@ -24,9 +25,10 @@ spec:
           value: "27079"
         # Pato the GitHub app PEM key
         - name: GITHUB_APP_PEM_KEY
-          value: /var/secrets/github/kf-label-bot-dev.private-key.pem
+          value: /var/secrets/github/kf-label-bot-prod.private-key.pem
         # The GCP project and pubsub topic to publish to should
-        # correspond to the production backend
+        # correspond to the production backend. The project is unfortunately
+        # named issue-label-bot-dev.
         - name: GCP_PROJECT_ID
           value: issue-label-bot-dev
         - name: GCP_PUBSUB_TOPIC_NAME
