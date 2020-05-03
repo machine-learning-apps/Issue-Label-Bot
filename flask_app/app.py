@@ -123,7 +123,7 @@ def bot():
     verify_webhook(request)
 
     # Check if payload corresponds to an issue being opened
-    if 'action' not in request.json or request.json['action'] != 'opened' or 'issue' not in request.json:
+    if 'issue' not in request.json:
         logging.warning("Event is not for an issue with action opened.")
         return 'ok'
 
@@ -143,6 +143,9 @@ def bot():
     logging.info(f"Recieved {username}/{repo}#{issue_num}")
     try:
         # forward some issues of specific repos and select by their given forwarded proportion
+        # TODO(jlewi): We could probably simplify this because at this point
+        # for any repo/org that we are forwarding the issues we should probably
+        # always forward the issues.
         forward_probability = None
         repo_spec = f'{username}/{repo}'
         if username in forwarded_repos.get("orgs", {}):
@@ -166,6 +169,11 @@ def bot():
         logging.error(f"Exception occured while handling issue "
                       f"{username}/{repo}#{issue_num}\n Exception: {e}\n"
                       f"{traceback.format_exc()}")
+
+    # Check if payload corresponds to an issue being opened
+    if 'action' not in request.json or request.json['action'] != 'opened':
+        logging.warning("Event is not for an issue with action opened.")
+        return 'ok'
 
     # write the issue to the database using ORM
     issue_db_obj = Issues(repo=repo,
