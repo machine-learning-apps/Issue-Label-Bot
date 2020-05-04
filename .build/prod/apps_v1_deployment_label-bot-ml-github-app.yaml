@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: label-bot
+    environment: prod
+    service: label-bot
+  name: label-bot-ml-github-app
+  namespace: label-bot-prod
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: label-bot
+      environment: prod
+      service: label-bot
+  template:
+    metadata:
+      labels:
+        app: label-bot
+        environment: prod
+        service: label-bot
+    spec:
+      containers:
+      - command:
+        - python
+        - app.py
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: DATABASE_URL
+              name: ml-app-inference-secret
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: WEBHOOK_SECRET
+              name: ml-app-inference-secret
+        - name: APP_ID
+          value: "27079"
+        - name: GITHUB_APP_PEM_KEY
+          value: /var/secrets/github/kf-label-bot-prod.private-key.pem
+        - name: GCP_PROJECT_ID
+          value: issue-label-bot-dev
+        - name: GCP_PUBSUB_TOPIC_NAME
+          value: event_queue
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/user-gcp-sa.json
+        - name: FLASK_ENV
+          value: production
+        - name: PORT
+          value: "3000"
+        - name: APP_URL
+          value: https://mlbot.net/
+        - name: authors
+          value: c
+        image: gcr.io/github-probots/label-bot-frontend:3f698dc
+        name: frontend
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        volumeMounts:
+        - mountPath: /var/secrets/google
+          name: user-gcp-sa
+        - mountPath: /var/secrets/github
+          name: github-app
+        workingDir: /flask_app
+      volumes:
+      - name: user-gcp-sa
+        secret:
+          secretName: user-gcp-sa
+      - name: github-app
+        secret:
+          secretName: github-app

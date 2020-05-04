@@ -21,6 +21,16 @@ else
 GIT_VERSION := $(shell git describe --always)-dirty-$(shell git diff | shasum -a256 | cut -c -6)
 endif
 
+CONTEXT=label-bot-frontend-prod
+
+hydrate-prod:
+	rm -rf .build/prod
+	mkdir -p .build/prod
+	kustomize build -o .build/prod deployment/overlays/prod
+
+apply-prod: hydrate-prod
+	kubectl --context=$(CONTEXT) apply -f .build/prod
+
 TAG := $(shell date +v%Y%m%d)-$(GIT_VERSION)
 all: build
 

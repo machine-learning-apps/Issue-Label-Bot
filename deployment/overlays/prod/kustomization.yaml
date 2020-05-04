@@ -6,7 +6,7 @@ namespace: label-bot-prod
 images:
 - name: gcr.io/github-probots/label-bot-frontend
   newName: gcr.io/github-probots/label-bot-frontend
-  newTag: 2cb624e
+  newTag: 3f698dc
 resources:
 - certificate.yaml
 - ../../base

@@ -1,3 +1,4 @@
+!.build
 .*
 *.pem
 *.hdf5

@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: label-bot-prod
+    networking.gke.io/managed-certificates: certificate
+  labels:
+    app: label-bot
+    environment: prod
+    service: label-bot
+  name: label-bot-frontend
+  namespace: label-bot-prod
+spec:
+  backend:
+    serviceName: label-bot-ml-github-app
+    servicePort: 3000
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: label-bot-ml-github-app
+          servicePort: 3000
+        path: /
