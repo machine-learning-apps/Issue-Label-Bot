@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  labels:
+    environment: prod
+  name: certificate
+  namespace: label-bot-prod
+spec:
+  domains:
+  - label-bot-prod.mlbot.net

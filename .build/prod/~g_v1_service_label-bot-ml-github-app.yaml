@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: label-bot
+    environment: prod
+    service: label-bot
+  name: label-bot-ml-github-app
+  namespace: label-bot-prod
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+  selector:
+    app: label-bot
+    environment: prod
+    service: label-bot
+  type: NodePort
