@@ -56,7 +56,7 @@ More examples can be viewed on our [app's homepage](https://mlbot.net/).  It sho
 - [/deployment](/deployment): This directory contains files that are helpful in deploying the app.
     - [Dockerfile](/deployment/Dockerfile) this is the definition of the container that is used to run the flask app.  The build for this container is hosted on DockerHub at [hamelsmu/mlapp](https://hub.docker.com/r/hamelsmu/mlapp).
     - [heroku.yml](/heroku.yml): this is used for [deploying to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime).
-    - *.yaml: these files relate to a Kubernetees deployment.
+    - *.yaml: these files relate to a Kubernetes deployment.
  
 # Running This Code
 
@@ -104,9 +104,9 @@ Note: If you are using [zsh](http://www.zsh.org/), the [dotenv](https://github.c
 
 ## Deploy As A Service
 
-The assets in this repo allow you to [deploy to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime) (easier) or a Kubernetees cluster (more advanced).  
+The assets in this repo allow you to [deploy to Heroku](https://devcenter.heroku.com/articles/container-registry-and-runtime) (easier) or a Kubernetes cluster (more advanced).  
 
-In Heroku, secrets can be passed in as [configuration variables](https://devcenter.heroku.com/articles/config-vars).  Furthermore, [this documentation](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) describes how you can set secrets in Kubernetees.  Make sure you set the environment variable `FLASK_ENV` to `production` if you are going to deploy the app publicly.
+In Heroku, secrets can be passed in as [configuration variables](https://devcenter.heroku.com/articles/config-vars).  Furthermore, [this documentation](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) describes how you can set secrets in Kubernetes.  Make sure you set the environment variable `FLASK_ENV` to `production` if you are going to deploy the app publicly.
 
 
 # Contributing
