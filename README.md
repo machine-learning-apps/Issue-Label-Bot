@@ -39,12 +39,12 @@ When an issue is opened, the bot predicts if the label should be a: `feature req
 
 
 
-More examples can be viewed on our [app's homepage](https://mlbot.net/).  It should be noted that the bot may not apply any label in circumstances where the prediction is uncertain.  See the [disclaimers](#Disclaimers) section for more caveats.
+More examples can be viewed on our [app's homepage](https://label-bot-prod.mlbot.net/).  It should be noted that the bot may not apply any label in circumstances where the prediction is uncertain.  See the [disclaimers](#Disclaimers) section for more caveats.
 
 
 ## Important links
 
-- [Issue Label Bot homepage](https://mlbot.net). Provides a way to view example predictions as well as other information regarding this bot.
+- [Issue Label Bot homepage](https://label-bot-prod.mlbot.net/). Provides a way to view example predictions as well as other information regarding this bot.
  - GitHub [App page](https://github.com/marketplace/issue-label-bot) for Issue Label Bot, where you can install the app. See [disclaimers](#Disclaimers) below before installing.
  
  
