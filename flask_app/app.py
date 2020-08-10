@@ -175,6 +175,15 @@ def bot():
         logging.warning("Event is not for an issue with action opened.")
         return 'ok'
 
+
+    # get the isssue handle
+    issue = get_issue_handle(installation_id, username, repo, issue_num)
+
+    # Check if issue has no labels
+    if any(issue.labels()):
+        logging.warning("Event is not for an unlabeled issue.")
+        return 'ok'
+
     # write the issue to the database using ORM
     issue_db_obj = Issues(repo=repo,
                           username=username,
@@ -194,9 +203,6 @@ def bot():
 
     # get the most confident prediction
     argmax = max(predictions, key=predictions.get)
-
-    # get the isssue handle
-    issue = get_issue_handle(installation_id, username, repo, issue_num)
 
 
     labeled = True
