@@ -226,8 +226,9 @@ def bot():
         LOG.warning(f'Not confident enough to label this issue: # {str(issue_num)}')
         labeled = False
 
-    # Make a comment using the GitHub api
-    comment = issue.create_comment(message)
+    if not 'skip-message' in yaml:
+        # Make a comment using the GitHub api
+        comment = issue.create_comment(message)
 
     # log the event to the database using ORM
     issue_db_obj.add_prediction(comment_id=comment.id,
